@@ -1,6 +1,7 @@
 #include "kontrola_Nixie.h"
 
 
+
 void nixieWrite(uint8_t value)
 {
   //D is most significant bit
@@ -11,39 +12,49 @@ void nixieWrite(uint8_t value)
   digitalWrite(9, value & 0x01);
 }
 
-void wyswietlPWM(int C[], unsigned long okres, unsigned long &licznik, int &licznik_jasnosci, int &lampa, int &jasnosc)
+void wyswietlPWM(int C[], unsigned long okres, unsigned long &licznik_czasu, int &licznik_jasnosci, int &lampa, int &jasnosc)
 {
-  if(okres <= (micros()-licznik) )        //kiedy zapalić lampe
-      {
-        licznik = micros();
-        digitalWrite(latchPin, LOW);
+  wylaczLampe(C,okres,licznik_czasu,licznik_jasnosci,lampa,jasnosc);
+  wlaczLampe(C,okres,licznik_czasu,licznik_jasnosci,lampa,jasnosc);
+}
 
-        byte zero=0;
-        
-        bitWrite(zero, lampa , HIGH);
-        shiftOut(dataPin, clockPin, MSBFIRST, zero);
-        digitalWrite(latchPin, HIGH);
+void wlaczLampe(int C[], unsigned long okres, unsigned long &licznik_czasu, int &licznik_jasnosci, int &lampa, int &jasnosc)
+{
+  if(okres <= (micros()-licznik_czasu) )        //kiedy zapalić lampe
+        {
+          licznik_czasu = micros();
+          digitalWrite(latchPin, LOW);
 
-        //nixieWrite(C[lampa -1])
+          byte zero=0;
+          
+          bitWrite(zero, lampa , HIGH);
+          shiftOut(dataPin, clockPin, MSBFIRST, zero);
+          digitalWrite(latchPin, HIGH);
 
-        if(lampa  == 6) 
-          lampa =1;
-        else lampa ++;
-      }
+          //nixieWrite(C[lampa -1])
 
-    if(((okres*jasnosc)/100) <= (micros()-licznik))       //kiedy zgasić lampe PWM (jasność)
+          if(lampa  == 6) 
+            lampa =1;
+          else lampa ++;
+
+          
+          if(licznik_jasnosci==10)                                        //pobieranie wartości do jasności
+            {
+              jasnosc = map(analogRead(A1),0,1023,10,99); 
+              licznik_jasnosci=0;
+            }
+          licznik_jasnosci++;
+        }
+}
+
+void wylaczLampe(int C[], unsigned long okres, unsigned long &licznik_czasu, int &licznik_jasnosci, int &lampa, int &jasnosc)
+{
+  if(((okres*jasnosc)/100) <= (micros()-licznik_czasu))       //kiedy zgasić lampe PWM (jasność)
     {
       byte zero=0;
       digitalWrite(latchPin, LOW);
       bitWrite(zero, lampa , LOW);
       shiftOut(dataPin, clockPin, MSBFIRST, zero);
       digitalWrite(latchPin, HIGH);
-      
-      if(licznik_jasnosci==1)                                        //pobieranie wartości do jasności
-      {
-        jasnosc = map(analogRead(A1),0,1023,5,99); 
-        licznik_jasnosci=0;
-      }
-      licznik_jasnosci++;
     }
 }

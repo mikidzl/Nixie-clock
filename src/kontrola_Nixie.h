@@ -12,5 +12,7 @@ const int dataPin = 2;
 
 void nixieWrite(uint8_t value);
 void wyswietlPWM(int C[], unsigned long okres, unsigned long &licznik, int &licznik_jasnosci, int &lampa, int &jasnosc);
+void wylaczLampe(int C[], unsigned long okres, unsigned long &licznik, int &licznik_jasnosci, int &lampa, int &jasnosc);
+void wlaczLampe(int C[], unsigned long okres, unsigned long &licznik, int &licznik_jasnosci, int &lampa, int &jasnosc);
 
 #endif
