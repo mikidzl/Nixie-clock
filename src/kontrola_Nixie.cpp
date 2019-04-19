@@ -49,12 +49,12 @@ void NIXIE::wlaczLampe(int C[])
     else
       lampa++;
 
-    if (licznik_jasnosci == 10) //pobieranie wartości do jasności
-    {
-      jasnosc = map(analogRead(A1), 0, 1023, 10, 99);
-      licznik_jasnosci = 0;
-    }
-    licznik_jasnosci++;
+    // if (licznik_jasnosci == 10) //pobieranie wartości do jasności
+    // {
+    //   jasnosc = map(analogRead(A1), 0, 1023, 10, 99);
+    //   licznik_jasnosci = 0;
+    // }
+    // licznik_jasnosci++;
   }
 }
 

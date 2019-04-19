@@ -3,24 +3,21 @@
 #include "kontrola_Nixie.h"
 #include "przyciski.h"
 #include "zegarRTC.h"
+#include "Menu.h"
 
-Przycisk przycisk1(5);
-Przycisk przycisk2(6);
-NIXIE nixie;
+
+
+Przycisk przycisk1(6); // deklaracje przycisków
+Przycisk przycisk2(7);
+NIXIE nixie;          // klasa konwertująca BCD oraz obsługująca lampy
 int tablica_Nixie[6]; //tablica cyfr do wyświetlenia na lampach
 
-const int szum_przemiatnie = 14; // pin do pobieania szumu inicjującego rand
+zegarRTC Zegar; //klasa obsługująca zegar RTC
+
+const int szum_przemiatnie = 14; // pin do pobierania szumu inicjującego rand
 
 unsigned long czasPrzycisk = 0;
 
-enum Opcje
-{
-  zegar_,
-  ustawianie_czasu,
-  budzik_,
-  termometr,
-  odtruwanie_lampy
-};
 Opcje opcja = zegar_;
 bool opcjaStan = true;
 unsigned long licznik_Menu;
@@ -35,15 +32,13 @@ unsigned long czas_Przemiecenia = 10000000;
 
 //____________________________________________________________________
 
-void menu(); //wybieranie opcji do wyświetlenia
-void zegar(int C[]);
+//void menu(); //wybieranie opcji do wyświetlenia
 void ustawianieCzasu(int C[]);
 void temperaturaUstaw(int C[]);
 void odtruwanieLamp(int C[]);
 void budzik(int C[]);
 void startOpcja();
 void wrocDoZegara();
-int wlaczZegar();
 
 //___________________________________________________________________________
 
@@ -56,8 +51,6 @@ void setup()
 
   pinMode(przycisk1.pin, INPUT_PULLUP);
   pinMode(przycisk2.pin, INPUT_PULLUP);
-
-  godzina_odtrucia = wlaczZegar();
 }
 
 void loop()
@@ -66,70 +59,94 @@ void loop()
   //menu();
   nixie.wyswietlPWM(tablica_Nixie);
 
-  zegar(tablica_Nixie);
-  // przycisk(przycisk1, czasPrzycisk);         // obsługa stanu przycisków
-  // przycisk(przycisk2, czasPrzycisk);
-}
+  Zegar.zegar(tablica_Nixie);
+  przycisk1.sprawdzPrzycisk(czasPrzycisk); // obsługa stanu przycisków
+  przycisk2.sprawdzPrzycisk(czasPrzycisk);
 
-void menu()
-{
-  switch (opcja)
+  if (przycisk1.stan == krotkieWcisniecie)
   {
-  case zegar_:
-    switch (przycisk1.stan)
-    {
-    case krotkieWcisniecie:
-      opcja = termometr; //
-      przycisk1.stan = wylaczony;
-      break;
-
-    case dlugieWcisniecie:
-      opcja = ustawianie_czasu;
-      przycisk1.stan = wylaczony;
-      break;
-    }
-
-    zegar(tablica_Nixie);
-
-    if (tablica_Nixie[1] - godzina_odtrucia != 0)
-    {
-      opcja = odtruwanie_lampy;
-      godzina_odtrucia = tablica_Nixie[1];
-    }
-
-    break;
-
-  case ustawianie_czasu:
-    startOpcja();
-    ustawianieCzasu(tablica_Nixie);
-    wrocDoZegara();
-
-    break;
-
-  case termometr:
-    startOpcja();
-    temperaturaUstaw(tablica_Nixie);
-    wrocDoZegara();
-
-    break;
-
-  case budzik_:
-    //switch(p1)
-    //budzik(Nixie);
-
-    break;
-
-  case odtruwanie_lampy:
-
-    odtruwanieLamp(tablica_Nixie);
-
-    break;
-
-  default:
-    opcja = zegar_;
-    break;
+    if (nixie.jasnosc < 84)
+      nixie.jasnosc += 15;
+    przycisk1.zerujPrzycisk();
+  }
+  else if (przycisk1.stan == dlugieWcisniecie)
+  {
+      nixie.jasnosc = 5;
+    przycisk1.zerujPrzycisk();
+  }
+  if (przycisk2.stan == krotkieWcisniecie)
+  {
+    if (nixie.jasnosc > 16)
+      nixie.jasnosc += -15;
+    przycisk2.zerujPrzycisk();
+  }
+  else if (przycisk2.stan == dlugieWcisniecie)
+  {
+    if (nixie.jasnosc > 21)
+      nixie.jasnosc += -10;
+    przycisk2.zerujPrzycisk();
   }
 }
+
+// void menu()
+// {
+//   switch (opcja)
+//   {
+//   case zegar_:
+//     switch (przycisk1.stan)
+//     {
+//     case krotkieWcisniecie:
+//       opcja = termometr;
+//       przycisk1.stan = wylaczony;
+//       break;
+
+//     case dlugieWcisniecie:
+//       opcja = ustawianie_czasu;
+//       przycisk1.stan = wylaczony;
+//       break;
+//     }
+
+//     Zegar.zegar(tablica_Nixie);
+
+//     if (tablica_Nixie[1] - godzina_odtrucia != 0)
+//     {
+//       opcja = odtruwanie_lampy;
+//       godzina_odtrucia = tablica_Nixie[1];
+//     }
+
+//     break;
+
+//   case ustawianie_czasu:
+//     startOpcja();
+//     Zegar.ustawianieCzasu(tablica_Nixie);
+//     wrocDoZegara();
+
+//     break;
+
+//   case termometr:
+//     startOpcja();
+//     Zegar.temperaturaUstaw(tablica_Nixie);
+//     wrocDoZegara();
+
+//     break;
+
+//   case budzik_:
+//     //switch(p1)
+//     Zegar.budzik(tablica_Nixie);
+
+//     break;
+
+//   case odtruwanie_lampy:
+
+//     odtruwanieLamp(tablica_Nixie);
+
+//     break;
+
+//   default:
+//     opcja = zegar_;
+//     break;
+//   }
+// }
 
 void startOpcja()
 {
@@ -152,7 +169,7 @@ void odtruwanieLamp(int C[])
   }
 
   randomSeed(analogRead(szum_przemiatnie));
-  zegar(C);
+  Zegar.zegar(C);
 
   if (czas_Przemiecenia + licznik_przemiecen * (czas_Przemiecenia / 10) <= micros() - przemiatanie)
   {

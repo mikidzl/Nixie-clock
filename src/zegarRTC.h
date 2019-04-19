@@ -6,21 +6,23 @@
 #include <Wire.h>
 #include <RtcDS3231.h>
 
-RtcDateTime dt;
-RtcDS3231<TwoWire> clock(Wire); // deklarcja zegara
+// RtcDS3231<TwoWire> RTC(); // deklarcja zegara
+// RtcDateTime dt;
 
 class zegarRTC
 {
-  private:
-    unsigned int ogranicznik_zegara = 0;
-    unsigned int interwal = 800000;
+private:
+  unsigned long ogranicznik_zegara = 0;
+  unsigned long interwal = 800000;
 
-  public:
-    zegarRTC(/* args */);
-    void zegar(int C[]);
-    void ustawianieCzasu(int C[]);
-    void temperaturaUstaw(int C[]);
-    int godzina_Odtrucia;
+public:
+  void zegar(int C[]);
+  void ustawianieCzasu(int C[]);
+  void temperaturaUstaw(int C[]);
+  void budzik(int C[]);
+  int godzina_Odtrucia;
+
+  zegarRTC();
 };
 
 #endif

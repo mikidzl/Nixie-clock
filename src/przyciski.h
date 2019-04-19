@@ -5,23 +5,24 @@
 
 enum wartoscPrzycisku
 {
-    wylaczony,
-    wcisniety,
-    krotkieWcisniecie,
-    dlugieWcisniecie
+  wylaczony,
+  wcisniety,
+  krotkieWcisniecie,
+  dlugieWcisniecie
 };
 
 class Przycisk
 {
-  public:
-    wartoscPrzycisku stan;
-    int pin;
-    Przycisk(int pinPrzycisku);
-    void sprawdzPrzycisk(Przycisk przyscisk, unsigned long &czasPrzycisk);
+public:
+  wartoscPrzycisku stan;
+  int pin;
+  Przycisk(int pinPrzycisku);
+  void sprawdzPrzycisk(unsigned long &czasPrzycisk);
+  void zerujPrzycisk();
 
-  private:
-    unsigned long opoznieniePrzycisk = 50000;
-    unsigned long graniczneWcisniecie = 200000;
+private:
+  unsigned long opoznieniePrzycisk = 30000;
+  unsigned long graniczneWcisniecie = 300000;
 };
 
 #endif
