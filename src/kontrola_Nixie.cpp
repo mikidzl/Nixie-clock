@@ -2,11 +2,11 @@
 
 NIXIE::NIXIE()
 {
-  latchPin = 3;
-  clockPin = 4;
+  latchPin = 4;
+  clockPin = 3;
   dataPin = 2;
 
-  okres = 2000;      //czas między zapalaniem się kolejnych lamp
+  okres = 2000000;      //czas między zapalaniem się kolejnych lamp
   licznik_czasu = 0; //zmienna do określania czasu
   jasnosc = 50;      //procentowa wartość jasności
   lampa = 1;         //sprawdzanie która lampa jest aktywna

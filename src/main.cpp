@@ -5,8 +5,6 @@
 #include "zegarRTC.h"
 #include "Menu.h"
 
-
-
 Przycisk przycisk1(6); // deklaracje przycisków
 Przycisk przycisk2(7);
 NIXIE nixie;          // klasa konwertująca BCD oraz obsługująca lampy
@@ -40,6 +38,8 @@ void budzik(int C[]);
 void startOpcja();
 void wrocDoZegara();
 
+void fejkDispej(int C[]);
+
 //___________________________________________________________________________
 
 void setup()
@@ -51,41 +51,45 @@ void setup()
 
   pinMode(przycisk1.pin, INPUT_PULLUP);
   pinMode(przycisk2.pin, INPUT_PULLUP);
+
+  Serial.begin(115200);
+  Serial.print("Połączono");
 }
 
 void loop()
 {
-
   //menu();
-  nixie.wyswietlPWM(tablica_Nixie);
-
+  //nixie.wyswietlPWM(tablica_Nixie);
   Zegar.zegar(tablica_Nixie);
-  przycisk1.sprawdzPrzycisk(czasPrzycisk); // obsługa stanu przycisków
-  przycisk2.sprawdzPrzycisk(czasPrzycisk);
 
-  if (przycisk1.stan == krotkieWcisniecie)
-  {
-    if (nixie.jasnosc < 84)
-      nixie.jasnosc += 15;
-    przycisk1.zerujPrzycisk();
-  }
-  else if (przycisk1.stan == dlugieWcisniecie)
-  {
-      nixie.jasnosc = 5;
-    przycisk1.zerujPrzycisk();
-  }
-  if (przycisk2.stan == krotkieWcisniecie)
-  {
-    if (nixie.jasnosc > 16)
-      nixie.jasnosc += -15;
-    przycisk2.zerujPrzycisk();
-  }
-  else if (przycisk2.stan == dlugieWcisniecie)
-  {
-    if (nixie.jasnosc > 21)
-      nixie.jasnosc += -10;
-    przycisk2.zerujPrzycisk();
-  }
+  fejkDispej(tablica_Nixie);
+  delay(500);
+  //przycisk1.sprawdzPrzycisk(czasPrzycisk); // obsługa stanu przycisków
+  //przycisk2.sprawdzPrzycisk(czasPrzycisk);
+
+  // if (przycisk1.stan == krotkieWcisniecie)
+  // {
+  //   if (nixie.jasnosc < 84)
+  //     nixie.jasnosc += 15;
+  //   przycisk1.zerujPrzycisk();
+  // }
+  // else if (przycisk1.stan == dlugieWcisniecie)
+  // {
+  //     nixie.jasnosc = 5;
+  //   przycisk1.zerujPrzycisk();
+  // }
+  // if (przycisk2.stan == krotkieWcisniecie)
+  // {
+  //   if (nixie.jasnosc > 16)
+  //     nixie.jasnosc += -15;
+  //   przycisk2.zerujPrzycisk();
+  // }
+  // else if (przycisk2.stan == dlugieWcisniecie)
+  // {
+  //   if (nixie.jasnosc > 21)
+  //     nixie.jasnosc += -10;
+  //   przycisk2.zerujPrzycisk();
+  // }
 }
 
 // void menu()
@@ -184,4 +188,16 @@ void odtruwanieLamp(int C[])
 
   if ((6 - nixie.lampa) - licznik_przemiecen >= 0)
     C[nixie.lampa - 1] = random(10);
+}
+
+void fejkDispej(int C[])
+{
+  Serial.print(C[0]);
+  Serial.print(C[1]);
+  Serial.print(":");
+  Serial.print(C[2]);
+  Serial.print(C[3]);
+  Serial.print(":");
+  Serial.print(C[4]);
+  Serial.println(C[5]);
 }

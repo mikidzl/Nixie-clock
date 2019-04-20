@@ -2,24 +2,24 @@
 
 zegarRTC::zegarRTC()
 {
-  //RTC.Begin();
-  //godzina_Odtrucia = RTC.GetDateTime().Hour() %10;
+  RTC.begin();
+  godzina_Odtrucia = RTC.getDateTime().hour %10;
 }
 
 void zegarRTC::zegar(int C[]) //pobiera czas z modułu RTC oraz rozbija na cyfry
 {
   if (micros() - ogranicznik_zegara >= interwal)
   {
-    //dt = RTC.GetDateTime();
+    dt = RTC.getDateTime();
 
-    // C[5] = dt.Second() % 10;
-    // C[4] = dt.Second() / 10;
+    C[5] = dt.second % 10;
+    C[4] = dt.second / 10;
 
-    // C[3] = dt.Minute() % 10;
-    // C[2] = dt.Minute() / 10;
+    C[3] = dt.minute % 10;
+    C[2] = dt.minute / 10;
 
-    // C[1] = dt.Hour() % 10;
-    // C[0] = dt.Hour() / 10;
+    C[1] = dt.hour % 10;
+    C[0] = dt.hour / 10;
 
     ogranicznik_zegara = micros();
   }
@@ -41,6 +41,10 @@ void zegarRTC::temperaturaUstaw(int C[])
   C[5] = temperatura % 10;
 }
 
-void zegarRTC::budzik(int C[])
-{
-}
+// void zegarRTC::budzik(int C[], wartoscPrzycisku)
+// {
+//   if(wartoscPrzycisku == wylaczony)
+//   {
+    
+//   }
+// }
