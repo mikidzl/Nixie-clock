@@ -3,6 +3,15 @@
 
 #include "Arduino.h"
 
+enum CzasPara
+{
+  Sekunda,
+  Minuta,
+  Godzina,
+
+  ostatni_element
+};
+
 class NIXIE
 {
   private:
@@ -24,6 +33,7 @@ class NIXIE
 
     NIXIE();
     void wyswietlPWM(int C[]);
+    void migajZegar(int C[], CzasPara para);
 
 };
 

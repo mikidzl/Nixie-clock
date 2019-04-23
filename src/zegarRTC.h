@@ -20,6 +20,13 @@ public:
   void ustawianieCzasu(int C[]);
   void temperaturaUstaw(int C[]);
   void budzik(int C[]);
+  bool opcja_wlaczona;
+
+  void zmienSekunde(int C[], bool dodac);
+  void zmienMinute(int C[], bool dodac);
+  void zmienGodzine(int C[], bool dodac);
+  void sprawdzOverflow(int C[]);
+
 
   int godzina_Odtrucia;
 

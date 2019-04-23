@@ -20,15 +20,17 @@ void Przycisk::sprawdzPrzycisk(unsigned long &czasPrzycisk)
       czasPrzycisk = micros();
       stan = wcisniety;
     }
-    else if ((digitalRead(pin) == HIGH) && graniczneWcisniecie <= (micros() - czasPrzycisk))
+    else if ((digitalRead(pin) == HIGH) && graniczneWcisniecie <= (micros() - czasPrzycisk) && stan == wcisniety)
     {
       czasPrzycisk = micros();
       stan = dlugieWcisniecie;
     }
-    else if ((digitalRead(pin) == HIGH))
+    else if ((digitalRead(pin) == HIGH) && stan == wcisniety)
     {
       czasPrzycisk = micros();
       stan = krotkieWcisniecie;
     }
+    else if (stan == krotkieWcisniecie || stan == dlugieWcisniecie)
+      stan = wylaczony;
   }
 }
