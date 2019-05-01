@@ -4,6 +4,7 @@ Przycisk::Przycisk(int pinPrzycisku)
 {
   pin = pinPrzycisku;
   stan = wylaczony;
+  pinMode(pin, INPUT_PULLUP);
 }
 
 void Przycisk::zerujPrzycisk()
@@ -31,6 +32,6 @@ void Przycisk::sprawdzPrzycisk(unsigned long &czasPrzycisk)
       stan = krotkieWcisniecie;
     }
     else if (stan == krotkieWcisniecie || stan == dlugieWcisniecie)
-      stan = wylaczony;
+      zerujPrzycisk();
   }
 }

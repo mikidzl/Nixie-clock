@@ -2,28 +2,27 @@
 #define MENU_H
 
 #include "Arduino.h"
+#include "Menu.h"
+#include "przyciski.h"
+#include "Opcje.h"
 
-enum Opcje
-{
-    zegar_,
-    ustawianie_czasu,
-    budzik_,
-    termometr,
-    odtruwanie_lampy,
-    
-    liczba_elementow
-};
+#include "zegarRTC.h"
+
 
 class Menu
 {
-  private:
-    /* data */
-  public:
-    Opcje opcja;
-    void nastepnaOpcja();
-    Menu(/* args */);
-    ~Menu();
-};
+private:
+  /* data */
+public:
+  Opcje opcja;
+  unsigned long licznik_Menu;
+  unsigned long powrot;
+  void startOpcja(Przycisk przycisk1, Przycisk przycisk2, Przycisk przycisk3);
+  void wrocDoZegara(Przycisk przycisk2);
 
+  void nastepnaOpcja();
+  Menu(/* args */);
+  void menu(int C[], zegarRTC, Przycisk przycisk1, Przycisk przycisk2, Przycisk przycisk3);
+};
 
 #endif
