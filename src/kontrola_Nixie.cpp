@@ -2,11 +2,11 @@
 
 NIXIE::NIXIE()
 {
-  latchPin = 4;
-  clockPin = 3;
+  latchPin = 3;
+  clockPin = 4;
   dataPin = 2;
 
-  okres = 1000000;   //czas między zapalaniem się kolejnych lamp
+  okres = 2000;   //czas między zapalaniem się kolejnych lamp
   licznik_czasu = 0; //zmienna do określania czasu
   jasnosc = 50;      //procentowa wartość jasności
   lampa = 1;         //sprawdzanie która lampa jest aktywna
@@ -22,31 +22,6 @@ void NIXIE::nixieNapisz(uint8_t value)
   digitalWrite(10, (value & 0x02) >> 1);
   digitalWrite(9, value & 0x01);
 }
-
-// void NIXIE::migajZegar(int C[], CzasPara para)
-// {
-//   switch (para)
-//   {
-//   case Sekunda:
-//     C[4] = 10;
-//     C[5] = 10;
-//     break;
-
-//   case Minuta:
-//     C[2] = 10;
-//     C[3] = 10;
-//     break;
-
-//   case Godzina:
-//     C[0] = 10;
-//     C[1] = 10;
-//     break;
-
-//   default:
-//     para = Sekunda;
-//     break;
-//   }
-// }
 
 void NIXIE::wyswietlPWM(int C[])
 {

@@ -15,13 +15,10 @@ void Menu::nastepnaOpcja()
     }
 }
 
-void Menu::startOpcja(Przycisk przycisk1, Przycisk przycisk2, Przycisk przycisk3)
+void Menu::wrocDoZegara(Przycisk przycisk1, Przycisk przycisk2, Przycisk przycisk3)
 {
     if (przycisk1.stan != wylaczony || przycisk2.stan != wylaczony || przycisk3.stan != wylaczony)
         licznik_Menu = micros();
-}
-void Menu::wrocDoZegara(Przycisk przycisk2)
-{
     if (powrot <= micros() - licznik_Menu || przycisk2.stan == dlugieWcisniecie)
     {
         opcja = zegar_;
@@ -37,11 +34,11 @@ void Menu::menu(int C[], zegarRTC Zegar, Przycisk przycisk1, Przycisk przycisk2,
         {
         case krotkieWcisniecie:
             opcja = termometr;
-            startOpcja(przycisk1, przycisk2, przycisk3);
+            
             break;
 
         case dlugieWcisniecie:
-            startOpcja(przycisk1, przycisk2, przycisk3);
+            
             opcja = ustawianie_czasu;
             break;
         }
@@ -59,14 +56,12 @@ void Menu::menu(int C[], zegarRTC Zegar, Przycisk przycisk1, Przycisk przycisk2,
     case ustawianie_czasu:
 
         Zegar.ustawianieCzasu(C, przycisk1, przycisk2, przycisk3);
-        wrocDoZegara(przycisk2);
 
         break;
 
     case termometr:
 
         Zegar.temperaturaUstaw(C);
-        wrocDoZegara(przycisk2);
 
         break;
 
@@ -86,4 +81,35 @@ void Menu::menu(int C[], zegarRTC Zegar, Przycisk przycisk1, Przycisk przycisk2,
         opcja = zegar_;
         break;
     }
+    if(opcja != zegar_)
+        wrocDoZegara(przycisk1, przycisk2, przycisk3);
+
 }
+
+void jasnosc()
+{
+//   if (przycisk1.stan == krotkieWcisniecie)
+//   {
+//     if (nixie.jasnosc < 84)
+//       nixie.jasnosc += 15;
+//     przycisk1.zerujPrzycisk();
+//   }
+//   else if (przycisk1.stan == dlugieWcisniecie)
+//   {
+//       nixie.jasnosc = 5;
+//     przycisk1.zerujPrzycisk();
+//   }
+//   if (przycisk2.stan == krotkieWcisniecie)
+//   {
+//     if (nixie.jasnosc > 16)
+//       nixie.jasnosc += -15;
+//     przycisk2.zerujPrzycisk();
+//   }
+//   else if (przycisk2.stan == dlugieWcisniecie)
+//   {
+//     if (nixie.jasnosc > 21)
+//       nixie.jasnosc += -10;
+//     przycisk2.zerujPrzycisk();
+//   }
+}
+

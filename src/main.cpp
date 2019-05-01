@@ -54,41 +54,31 @@ void setup()
 
 void loop()
 {
+  przemiatanie = micros();
   menu.menu(tablica_Nixie, Zegar, przycisk1, przycisk2, przycisk3);
   nixie.wyswietlPWM(tablica_Nixie);
 
-  fejkDispej(tablica_Nixie);
+  //fejkDispej(tablica_Nixie);
 
   przycisk1.sprawdzPrzycisk(czasPrzycisk); // obsługa stanu przycisków
   przycisk2.sprawdzPrzycisk(czasPrzycisk);
   przycisk3.sprawdzPrzycisk(czasPrzycisk);
+  Serial.println(micros()-przemiatanie);
+  //delay(500);
 }
 
-void jasnosc()
+
+
+void fejkDispej(int C[])
 {
-  // if (przycisk1.stan == krotkieWcisniecie)
-  // {
-  //   if (nixie.jasnosc < 84)
-  //     nixie.jasnosc += 15;
-  //   przycisk1.zerujPrzycisk();
-  // }
-  // else if (przycisk1.stan == dlugieWcisniecie)
-  // {
-  //     nixie.jasnosc = 5;
-  //   przycisk1.zerujPrzycisk();
-  // }
-  // if (przycisk2.stan == krotkieWcisniecie)
-  // {
-  //   if (nixie.jasnosc > 16)
-  //     nixie.jasnosc += -15;
-  //   przycisk2.zerujPrzycisk();
-  // }
-  // else if (przycisk2.stan == dlugieWcisniecie)
-  // {
-  //   if (nixie.jasnosc > 21)
-  //     nixie.jasnosc += -10;
-  //   przycisk2.zerujPrzycisk();
-  // }
+  Serial.print(C[0]);
+  Serial.print(C[1]);
+  Serial.print(":");
+  Serial.print(C[2]);
+  Serial.print(C[3]);
+  Serial.print(":");
+  Serial.print(C[4]);
+  Serial.println(C[5]);
 }
 
 void odtruwanieLamp(int C[])
@@ -116,15 +106,3 @@ void odtruwanieLamp(int C[])
 //   if ((6 - nixie.lampa) - licznik_przemiecen >= 0)
 //     C[nixie.lampa - 1] = random(10);
  }
-
-void fejkDispej(int C[])
-{
-  Serial.print(C[0]);
-  Serial.print(C[1]);
-  Serial.print(":");
-  Serial.print(C[2]);
-  Serial.print(C[3]);
-  Serial.print(":");
-  Serial.print(C[4]);
-  Serial.println(C[5]);
-}

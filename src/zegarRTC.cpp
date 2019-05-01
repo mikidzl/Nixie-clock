@@ -4,7 +4,7 @@ zegarRTC::zegarRTC()
 {
   //RTC.begin();
   //godzina_Odtrucia = RTC.getDateTime().hour %10;
-  ogranicznik_zegara = interwal;
+  ogranicznik_zegara = 0;
   opcja_wlaczona = false;
   opcjaZmienCzas = Sekunda;
 }
@@ -34,6 +34,24 @@ void zegarRTC::ustawianieCzasu(int C[], Przycisk przycisk1, Przycisk przycisk2, 
 
   if (przycisk2.stan == krotkieWcisniecie)
   {
+    // switch (opcjaZmienCzas)
+    // {
+    // case Sekunda:
+    //   opcjaZmienCzas = Minuta;
+    //   break;
+
+    // case Minuta:
+    //   opcjaZmienCzas = Godzina;
+    //   break;
+
+    // case Godzina:
+    //   opcjaZmienCzas = Sekunda;
+    //   break;
+
+    // default:
+    //   break;
+    // }
+
     opcjaZmienCzas = static_cast<CzasPara>(opcjaZmienCzas + 1);
     if (opcjaZmienCzas == ostatni_element)
     {
@@ -45,7 +63,7 @@ void zegarRTC::ustawianieCzasu(int C[], Przycisk przycisk1, Przycisk przycisk2, 
   {
     dt = RTC.getDateTime();
     uint8_t godzina = C[0] * 10 + C[1];
-    uint8_t minuta = C[2] * 10 + C[3];
+    uint8_t minuta = C[2] * 10 + C[3]; 
     uint8_t sekunda = C[4] * 10 + C[5];
 
     RTC.setDateTime(dt.year, dt.month, dt.day, godzina, minuta, sekunda);
@@ -130,7 +148,7 @@ void zegarRTC::zmienGodzine(int C[], bool dodac)
   }
 }
 
-void zegarRTC::zmienCzas(int C[], Przycisk przycisk1, Przycisk przycisk3)           //pozwala na zmiane wskazywanego czasu podręczenego i jego kontrolę przy pomocy przycisków
+void zegarRTC::zmienCzas(int C[], Przycisk przycisk1, Przycisk przycisk3) //pozwala na zmiane wskazywanego czasu podręczenego i jego kontrolę przy pomocy przycisków
 {
   if (przycisk1.stan == krotkieWcisniecie || przycisk3.stan == krotkieWcisniecie)
   {
@@ -177,6 +195,32 @@ void zegarRTC::temperaturaUstaw(int C[])
     C[3] = (temperatura / 100) % 10;
     C[4] = (temperatura / 10) % 10;
     C[5] = temperatura % 10;
+  }
+}
+
+void zegarRTC::migajZegarem(int C[])
+{
+  if (micros() - ogranicznik_zegara > okres_migania)
+    ;
+  switch (opcjaZmienCzas)
+  {
+  case Sekunda:
+    C[5] = 10;
+    C[4] = 10;
+    break;
+
+  case Minuta:
+    C[3] = 10;
+    C[2] = 10;
+    break;
+
+  case Godzina:
+    C[1] = 10;
+    C[0] = 10;
+    break;
+
+  default:
+    break;
   }
 }
 

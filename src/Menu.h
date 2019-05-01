@@ -17,8 +17,7 @@ public:
   Opcje opcja;
   unsigned long licznik_Menu;
   unsigned long powrot;
-  void startOpcja(Przycisk przycisk1, Przycisk przycisk2, Przycisk przycisk3);
-  void wrocDoZegara(Przycisk przycisk2);
+  void wrocDoZegara(Przycisk przycisk1, Przycisk przycisk2, Przycisk przycisk3);
 
   void nastepnaOpcja();
   Menu(/* args */);

@@ -20,7 +20,19 @@ class zegarRTC
 {
 private:
   unsigned long ogranicznik_zegara = 0;
-  unsigned long interwal = 800000;
+  unsigned long interwal = 990000;
+
+  void zmienSekunde(int C[], bool dodac);
+  void zmienMinute(int C[], bool dodac);
+  void zmienGodzine(int C[], bool dodac);
+  void sprawdzOverflow(int C[]);
+  void zmienCzas(int C[], Przycisk przycisk1, Przycisk przycisk3);
+
+  void migajZegarem(int C[]);
+  int Pomocnicza[6];
+  unsigned long okres_migania = 200000;
+  bool miganie = true;
+
 
 public:
   DS3231 RTC;
@@ -30,12 +42,8 @@ public:
   void temperaturaUstaw(int C[]);
   void budzik(int C[]);
   bool opcja_wlaczona;
-
-  void zmienCzas(int C[], Przycisk przycisk1, Przycisk przycisk3);
-  void zmienSekunde(int C[], bool dodac);
-  void zmienMinute(int C[], bool dodac);
-  void zmienGodzine(int C[], bool dodac);
-  void sprawdzOverflow(int C[]);
+  
+  
   bool dodac;
   CzasPara opcjaZmienCzas;
 
