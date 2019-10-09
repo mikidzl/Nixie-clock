@@ -12,7 +12,7 @@ Przycisk przycisk3(10);
 NIXIE nixie;          // klasa konwertująca BCD oraz obsługująca lampy
 int tablica_Nixie[6]; //tablica cyfr do wyświetlenia na lampach
 
-// zegarRTC Zegar; //klasa obsługująca zegar RTC
+zegarRTC Zegar; //klasa obsługująca zegar RTC
 
 Menu menu;
 

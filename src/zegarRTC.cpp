@@ -2,9 +2,9 @@
 
 zegarRTC::zegarRTC()
 {
-  RTC.begin();
+  //RTC.begin();
   //godzina_Odtrucia = RTC.getDateTime().hour %10;
-  ogranicznik_zegara = interwal;          //wartość początkowa, aby zegar od zadziałał od razu przy pierwszym włączeniu
+  ogranicznik_zegara = 0;          //wartość początkowa, aby zegar od zadziałał od razu przy pierwszym włączeniu
   opcja_wlaczona = false;
   opcjaZmienCzas = Sekunda;
 }
