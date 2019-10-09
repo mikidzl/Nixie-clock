@@ -2,5 +2,5 @@
     "board": "arduino:avr:nano",
     "configuration": "cpu=atmega328old",
     "port": "COM5",
-    "programmer": "AVR ISP"
+    "programmer": "ArduinoISP"
 }

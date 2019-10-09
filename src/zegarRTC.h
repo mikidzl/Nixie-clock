@@ -27,6 +27,7 @@ private:
   void zmienGodzine(int C[], bool dodac);
   void sprawdzOverflow(int C[]);
   void zmienCzas(int C[], Przycisk przycisk1, Przycisk przycisk3);
+  void zmienPara(Przycisk przycisk2);
 
   void migajZegarem(int C[]);
   int Pomocnicza[6];
@@ -40,7 +41,7 @@ public:
   void zegar(int C[]);
   void ustawianieCzasu(int C[], Przycisk przycisk1, Przycisk przycisk2, Przycisk przycisk3);
   void temperaturaUstaw(int C[]);
-  void budzik(int C[]);
+  // void budzik(int C[], enum wartoscPrzycisku);
   bool opcja_wlaczona;
   
   

@@ -18,11 +18,11 @@ public:
   int pin;
   Przycisk(int pinPrzycisku);
   void sprawdzPrzycisk(unsigned long &czasPrzycisk);
-  void zerujPrzycisk();
 
 private:
   unsigned long opoznieniePrzycisk = 30000;
-  unsigned long graniczneWcisniecie = 300000;
+  unsigned long graniczneWcisniecie = 350000;
+  void zerujPrzycisk();
 };
 
 #endif

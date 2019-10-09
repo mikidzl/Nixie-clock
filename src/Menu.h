@@ -20,8 +20,8 @@ public:
   void wrocDoZegara(Przycisk przycisk1, Przycisk przycisk2, Przycisk przycisk3);
 
   void nastepnaOpcja();
-  Menu(/* args */);
-  void menu(int C[], zegarRTC, Przycisk przycisk1, Przycisk przycisk2, Przycisk przycisk3);
+  Menu();
+  void program(int C[], zegarRTC, Przycisk przycisk1, Przycisk przycisk2, Przycisk przycisk3);
 };
 
 #endif

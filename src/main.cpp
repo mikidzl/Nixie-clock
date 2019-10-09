@@ -12,7 +12,7 @@ Przycisk przycisk3(10);
 NIXIE nixie;          // klasa konwertująca BCD oraz obsługująca lampy
 int tablica_Nixie[6]; //tablica cyfr do wyświetlenia na lampach
 
-zegarRTC Zegar; //klasa obsługująca zegar RTC
+// zegarRTC Zegar; //klasa obsługująca zegar RTC
 
 Menu menu;
 
@@ -41,29 +41,36 @@ void fejkDispej(int C[]);
 void setup()
 {
 
-  pinMode(nixie.latchPin, OUTPUT); //piny do sterowania rejestrem przesuwnym
-  pinMode(nixie.dataPin, OUTPUT);
-  pinMode(nixie.clockPin, OUTPUT);
+  // pinMode(nixie.latchPin, OUTPUT); //piny do sterowania rejestrem przesuwnym
+  // pinMode(nixie.dataPin, OUTPUT);
+  // pinMode(nixie.clockPin, OUTPUT);
+
+  pinMode(LED_BUILTIN,OUTPUT);
 
   Serial.begin(115200);
   Serial.println("Połączono");
 
-  Zegar.RTC.begin(); 
-  while (!Zegar.RTC.isReady());
+  // Zegar.RTC.begin(); 
+  // while (!Zegar.RTC.isReady());
 }
 
 void loop()
 {
-  przemiatanie = micros();
-  menu.menu(tablica_Nixie, Zegar, przycisk1, przycisk2, przycisk3);
-  nixie.wyswietlPWM(tablica_Nixie);
+  digitalWrite(LED_BUILTIN,HIGH);
+  delay(500);
+  digitalWrite(LED_BUILTIN,LOW);
+  delay(1000);
 
-  //fejkDispej(tablica_Nixie);
+  //przemiatanie = micros();
+  //menu.program(tablica_Nixie, Zegar, przycisk1, przycisk2, przycisk3);
+  //nixie.wyswietlPWM(tablica_Nixie);
 
-  przycisk1.sprawdzPrzycisk(czasPrzycisk); // obsługa stanu przycisków
-  przycisk2.sprawdzPrzycisk(czasPrzycisk);
-  przycisk3.sprawdzPrzycisk(czasPrzycisk);
-  Serial.println(micros()-przemiatanie);
+  fejkDispej(tablica_Nixie);
+
+  //przycisk1.sprawdzPrzycisk(czasPrzycisk); // obsługa stanu przycisków
+  //przycisk2.sprawdzPrzycisk(czasPrzycisk);
+  //przycisk3.sprawdzPrzycisk(czasPrzycisk);
+  //Serial.println(micros()-przemiatanie);
   //delay(500);
 }
 

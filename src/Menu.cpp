@@ -25,7 +25,7 @@ void Menu::wrocDoZegara(Przycisk przycisk1, Przycisk przycisk2, Przycisk przycis
     }
 }
 
-void Menu::menu(int C[], zegarRTC Zegar, Przycisk przycisk1, Przycisk przycisk2, Przycisk przycisk3)
+void Menu::program(int C[], zegarRTC Zegar, Przycisk przycisk1, Przycisk przycisk2, Przycisk przycisk3)
 {
     switch (opcja)
     {
