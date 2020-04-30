@@ -4,12 +4,13 @@
 enum Opcje
 {
   zegar_,
+  termometr,
+  data,
+
+  koniec,
   ustawianie_czasu,
   budzik_,
-  termometr,
-  odtruwanie_lampy,
-
-  liczba_elementow
+  odtruwanie_lampy
 };
 
 

@@ -12,16 +12,19 @@
 class Menu
 {
 private:
-  /* data */
-public:
-  Opcje opcja;
+  void stanPrzyciskow(Przycisk przycisk1, Przycisk przycisk2, Przycisk przycisk3);
   unsigned long licznik_Menu;
   unsigned long powrot;
-  void wrocDoZegara(Przycisk przycisk1, Przycisk przycisk2, Przycisk przycisk3);
-
+  void wrocDoZegara(Przycisk przycisk2);
   void nastepnaOpcja();
+  void poprzedniaOpcja();
+  void zmianaOpcji(Przycisk doPrzodu, Przycisk doTylu);
+  bool czyZmienicOpcje();
+
+public:
+  Opcje opcja;
   Menu();
-  void program(int C[], zegarRTC, Przycisk przycisk1, Przycisk przycisk2, Przycisk przycisk3);
+  void program(int C[], zegarRTC Zegar, Przycisk przycisk1, Przycisk przycisk2, Przycisk przycisk3);
 };
 
 #endif

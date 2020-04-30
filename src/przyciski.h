@@ -21,7 +21,7 @@ public:
 
 private:
   unsigned long opoznieniePrzycisk = 30000;
-  unsigned long graniczneWcisniecie = 350000;
+  unsigned long graniczneWcisniecie = 500000;
   void zerujPrzycisk();
 };
 

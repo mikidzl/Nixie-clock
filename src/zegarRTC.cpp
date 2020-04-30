@@ -2,11 +2,14 @@
 
 zegarRTC::zegarRTC()
 {
-  //RTC.begin();
+  
+  // RTC.begin();
+  // while (!RTC.isReady());
+  
   //godzina_Odtrucia = RTC.getDateTime().hour %10;
-  ogranicznik_zegara = 0;          //wartość początkowa, aby zegar od zadziałał od razu przy pierwszym włączeniu
+  ogranicznik_zegara = interwal;          //wartość początkowa, aby zegar od zadziałał od razu przy pierwszym włączeniu
   opcja_wlaczona = false;
-  opcjaZmienCzas = Sekunda;
+  wskaznikPary = Sekunda;
 }
 
 void zegarRTC::zegar(int C[]) //pobiera czas z modułu RTC oraz rozbija na cyfry
@@ -28,13 +31,30 @@ void zegarRTC::zegar(int C[]) //pobiera czas z modułu RTC oraz rozbija na cyfry
   }
 }
 
+void zegarRTC::data(int C[]) //pobiera czas z modułu RTC oraz rozbija na cyfry
+{
+  if (micros() - ogranicznik_zegara >= interwal)
+  {
+    dt = RTC.getDateTime();
+
+    C[5] = (dt.year - 2000) % 10;
+    C[4] = (dt.year - 2000) / 10;
+
+    C[3] = dt.month % 10;
+    C[2] = dt.month / 10;
+
+    C[1] = dt.day % 10;
+    C[0] = dt.day / 10;
+
+    ogranicznik_zegara = micros();
+  }
+}
+
 void zegarRTC::ustawianieCzasu(int C[], Przycisk przycisk1, Przycisk przycisk2, Przycisk przycisk3)
 {
-
   zmienPara(przycisk2);
-
   zmienCzas(C, przycisk1, przycisk3);
-
+  
   if (przycisk2.stan == dlugieWcisniecie)
   {
     dt = RTC.getDateTime();
@@ -59,7 +79,7 @@ void zegarRTC::zmienCzas(int C[], Przycisk przycisk1, Przycisk przycisk3) //pozw
       dodac = false;
     }
 
-    switch (opcjaZmienCzas)
+    switch (wskaznikPary)
     {
     case Sekunda:
       zmienSekunde(C, dodac);
@@ -84,37 +104,38 @@ void zegarRTC::zmienPara(Przycisk przycisk2)
 {
   if (przycisk2.stan == krotkieWcisniecie)
   {
-    // switch (opcjaZmienCzas)
+    // switch (wskaznikPary)
     // {
     // case Sekunda:
-    //   opcjaZmienCzas = Minuta;
+    //   wskaznikPary = Minuta;
     //   break;
 
     // case Minuta:
-    //   opcjaZmienCzas = Godzina;
+    //   //wskaznikPary = Godzina;
     //   break;
 
     // case Godzina:
-    //   opcjaZmienCzas = Sekunda;
+    //   wskaznikPary = Sekunda;
     //   break;
 
     // default:
+    //   wskaznikPary = Sekunda;
     //   break;
     // }
 
-    opcjaZmienCzas = static_cast<CzasPara>(opcjaZmienCzas + 1);
-    if (opcjaZmienCzas == ostatni_element)
+    wskaznikPary = static_cast<CzasPara>(wskaznikPary + 1);
+    if (wskaznikPary == ostatni_element)
     {
-      opcjaZmienCzas = Sekunda;
+      wskaznikPary = Sekunda;
     }
   }
 }
 
 void zegarRTC::sprawdzOverflow(int C[])
 {
-  for (int i = 5; i >= 1; i--) // przekroczenie górnego limitu cyfry
+  for (int i = 5; i >= 1; i--) 
   {
-    if ((C[i] == 6 && i % 2 == 0) || C[i] == 10)
+    if ((C[i] == 6 && i % 2 == 0) || C[i] == 10) // przekroczenie górnego limitu cyfry
     {
       C[i] = 0;
       C[i - 1]++;
@@ -135,7 +156,7 @@ void zegarRTC::sprawdzOverflow(int C[])
     }
   }
   
-  if (C[0] < 0)
+  if (C[0] < 0)           //overflow godzin
   {
     C[0] = 2;
     C[1] = 3;
@@ -203,7 +224,7 @@ void zegarRTC::migajZegarem(int C[])
 {
   if (micros() - ogranicznik_zegara > okres_migania)
     ;
-  switch (opcjaZmienCzas)
+  switch (wskaznikPary)
   {
   case Sekunda:
     C[5] = 10;

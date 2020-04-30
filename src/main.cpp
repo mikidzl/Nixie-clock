@@ -5,9 +5,9 @@
 #include "zegarRTC.h"
 #include "Menu.h"
 
-Przycisk przycisk1(8); // deklaracje przycisków
-Przycisk przycisk2(9);
-Przycisk przycisk3(10);
+Przycisk przycisk1(6); // deklaracje przycisków
+Przycisk przycisk2(7);
+Przycisk przycisk3(8);
 
 NIXIE nixie;          // klasa konwertująca BCD oraz obsługująca lampy
 int tablica_Nixie[6]; //tablica cyfr do wyświetlenia na lampach
@@ -30,6 +30,8 @@ bool czy_odtruwamy = false;
 unsigned long przemiatanie;
 unsigned long czas_Przemiecenia = 10000000;
 
+unsigned long fejktajm = 0;
+
 //____________________________________________________________________
 
 void odtruwanieLamp(int C[]);
@@ -40,36 +42,26 @@ void fejkDispej(int C[]);
 
 void setup()
 {
-
-  // pinMode(nixie.latchPin, OUTPUT); //piny do sterowania rejestrem przesuwnym
-  // pinMode(nixie.dataPin, OUTPUT);
-  // pinMode(nixie.clockPin, OUTPUT);
-
-  pinMode(LED_BUILTIN,OUTPUT);
-
   Serial.begin(115200);
   Serial.println("Połączono");
 
-  // Zegar.RTC.begin(); 
-  // while (!Zegar.RTC.isReady());
+  Zegar.RTC.begin(); 
+  while (!Zegar.RTC.isReady());
+
+  //przemiatanie = micros();
 }
 
 void loop()
 {
-  digitalWrite(LED_BUILTIN,HIGH);
-  delay(500);
-  digitalWrite(LED_BUILTIN,LOW);
-  delay(1000);
-
-  //przemiatanie = micros();
-  //menu.program(tablica_Nixie, Zegar, przycisk1, przycisk2, przycisk3);
+  menu.program(tablica_Nixie, Zegar, przycisk1, przycisk2, przycisk3);
   //nixie.wyswietlPWM(tablica_Nixie);
 
   fejkDispej(tablica_Nixie);
 
-  //przycisk1.sprawdzPrzycisk(czasPrzycisk); // obsługa stanu przycisków
-  //przycisk2.sprawdzPrzycisk(czasPrzycisk);
-  //przycisk3.sprawdzPrzycisk(czasPrzycisk);
+
+  przycisk1.sprawdzPrzycisk(czasPrzycisk); // obsługa stanu przycisków
+  przycisk2.sprawdzPrzycisk(czasPrzycisk);
+  przycisk3.sprawdzPrzycisk(czasPrzycisk);
   //Serial.println(micros()-przemiatanie);
   //delay(500);
 }
@@ -77,15 +69,20 @@ void loop()
 
 
 void fejkDispej(int C[])
-{
-  Serial.print(C[0]);
-  Serial.print(C[1]);
-  Serial.print(":");
-  Serial.print(C[2]);
-  Serial.print(C[3]);
-  Serial.print(":");
-  Serial.print(C[4]);
-  Serial.println(C[5]);
+{ 
+  if(micros() - fejktajm >= 100000)
+  {
+    Serial.print(C[0]);
+    Serial.print(C[1]);
+    Serial.print(":");
+    Serial.print(C[2]);
+    Serial.print(C[3]);
+    Serial.print(":");
+    Serial.print(C[4]);
+    Serial.println(C[5]);
+    fejktajm = micros();
+  }
+
 }
 
 void odtruwanieLamp(int C[])

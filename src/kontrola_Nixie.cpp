@@ -6,6 +6,11 @@ NIXIE::NIXIE()
   clockPin = 4;
   dataPin = 2;
 
+  pinMode(latchPin,OUTPUT);  //piny do sterowania rejestrem przesuwnym
+  pinMode(clockPin,OUTPUT);
+  pinMode(dataPin,OUTPUT);
+
+
   okres = 4000;   //czas między zapalaniem się kolejnych lamp
   licznik_czasu = 0; //zmienna do określania czasu
   jasnosc = 50;      //procentowa wartość jasności

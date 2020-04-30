@@ -6,15 +6,7 @@
 
 #include "Arduino.h"
 #include "przyciski.h"
-
-enum CzasPara
-{
-  Sekunda,
-  Minuta,
-  Godzina,
-
-  ostatni_element
-};
+#include "czasPara.h"
 
 class zegarRTC
 {
@@ -34,20 +26,19 @@ private:
   unsigned long okres_migania = 200000;
   bool miganie = true;
 
+  bool dodac;
+  
+  CzasPara wskaznikPary;
 
 public:
   DS3231 RTC;
   RTCDateTime dt;
   void zegar(int C[]);
+  void data(int C[]);
   void ustawianieCzasu(int C[], Przycisk przycisk1, Przycisk przycisk2, Przycisk przycisk3);
   void temperaturaUstaw(int C[]);
   // void budzik(int C[], enum wartoscPrzycisku);
   bool opcja_wlaczona;
-  
-  
-  bool dodac;
-  CzasPara opcjaZmienCzas;
-
   int godzina_Odtrucia;
 
   zegarRTC();

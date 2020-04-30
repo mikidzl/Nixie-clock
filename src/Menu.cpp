@@ -9,17 +9,50 @@ Menu::Menu()
 void Menu::nastepnaOpcja()
 {
     opcja = static_cast<Opcje>(opcja + 1);
-    if (opcja == liczba_elementow)
+    if (opcja == koniec)
     {
         opcja = zegar_;
     }
 }
 
-void Menu::wrocDoZegara(Przycisk przycisk1, Przycisk przycisk2, Przycisk przycisk3)
+void Menu::poprzedniaOpcja()
+{
+    if (opcja == zegar_)
+    {
+        opcja = koniec;
+    }
+    opcja = static_cast<Opcje>(opcja - 1);
+}
+
+void Menu::zmianaOpcji(Przycisk doPrzodu, Przycisk doTylu)
+{
+    if (czyZmienicOpcje())
+    {
+        if(doPrzodu.stan == krotkieWcisniecie)
+            nastepnaOpcja();
+
+        if(doTylu.stan == krotkieWcisniecie)
+            poprzedniaOpcja();  
+    }    
+}
+
+bool Menu::czyZmienicOpcje()
+{
+    if(opcja == ustawianie_czasu)
+        return false;
+    else
+        return true;      
+}
+
+void Menu::stanPrzyciskow(Przycisk przycisk1, Przycisk przycisk2, Przycisk przycisk3)
 {
     if (przycisk1.stan != wylaczony || przycisk2.stan != wylaczony || przycisk3.stan != wylaczony)
         licznik_Menu = micros();
-    if (powrot <= micros() - licznik_Menu || przycisk2.stan == dlugieWcisniecie)
+}
+
+void Menu::wrocDoZegara(Przycisk przycisk2)
+{  
+    if ((powrot <= micros() - licznik_Menu || przycisk2.stan == dlugieWcisniecie) && opcja != zegar_)
     {
         opcja = zegar_;
     }
@@ -27,20 +60,17 @@ void Menu::wrocDoZegara(Przycisk przycisk1, Przycisk przycisk2, Przycisk przycis
 
 void Menu::program(int C[], zegarRTC Zegar, Przycisk przycisk1, Przycisk przycisk2, Przycisk przycisk3)
 {
+    stanPrzyciskow(przycisk1, przycisk2, przycisk3);
+
+    zmianaOpcji(przycisk1, przycisk3);
+
     switch (opcja)
     {
     case zegar_:
-        switch (przycisk1.stan)
-        {
-        case krotkieWcisniecie:
-            opcja = termometr;
-            
-            break;
 
-        case dlugieWcisniecie:
-            
+        if(przycisk2.stan == dlugieWcisniecie)
+        {
             opcja = ustawianie_czasu;
-            break;
         }
 
         Zegar.zegar(C);
@@ -57,13 +87,22 @@ void Menu::program(int C[], zegarRTC Zegar, Przycisk przycisk1, Przycisk przycis
 
         Zegar.ustawianieCzasu(C, przycisk1, przycisk2, przycisk3);
 
+        wrocDoZegara(przycisk2);
         break;
 
     case termometr:
 
         Zegar.temperaturaUstaw(C);
+        wrocDoZegara(przycisk2);
+        break;
+
+    case data:
+
+        Zegar.data(C);
+        wrocDoZegara(przycisk2);
 
         break;
+
 
     case budzik_:
         //switch(p1)
@@ -74,6 +113,7 @@ void Menu::program(int C[], zegarRTC Zegar, Przycisk przycisk1, Przycisk przycis
     case odtruwanie_lampy:
 
         //odtruwanieLamp(tablica_Nixie);
+        wrocDoZegara(przycisk2);
 
         break;
 
@@ -81,8 +121,6 @@ void Menu::program(int C[], zegarRTC Zegar, Przycisk przycisk1, Przycisk przycis
         opcja = zegar_;
         break;
     }
-    if(opcja != zegar_)
-        wrocDoZegara(przycisk1, przycisk2, przycisk3);
 
 }
 

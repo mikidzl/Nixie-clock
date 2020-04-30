@@ -32,6 +32,8 @@ void Przycisk::sprawdzPrzycisk(unsigned long &czasPrzycisk)
       stan = krotkieWcisniecie;
     }
     else if (stan == krotkieWcisniecie || stan == dlugieWcisniecie)
+    {
       zerujPrzycisk();
+    }
   }
 }
