@@ -2,107 +2,74 @@
 
 Menu::Menu()
 {
-    opcja = zegar_;
+    option = clock;
     powrot = 7500000;
 }
 
-void Menu::nastepnaOpcja()
-{
-    opcja = static_cast<Opcje>(opcja + 1);
-    if (opcja == koniec)
-    {
-        opcja = zegar_;
-    }
-}
-
-void Menu::poprzedniaOpcja()
-{
-    if (opcja == zegar_)
-    {
-        opcja = koniec;
-    }
-    opcja = static_cast<Opcje>(opcja - 1);
-}
-
-void Menu::zmianaOpcji(Przycisk doPrzodu, Przycisk doTylu)
-{
-    if (czyZmienicOpcje())
-    {
-        if(doPrzodu.stan == krotkieWcisniecie)
-            nastepnaOpcja();
-
-        if(doTylu.stan == krotkieWcisniecie)
-            poprzedniaOpcja();  
-    }    
-}
-
-bool Menu::czyZmienicOpcje()
-{
-    if(opcja == ustawianie_czasu)
-        return false;
-    else
-        return true;      
-}
-
-void Menu::stanPrzyciskow(Przycisk przycisk1, Przycisk przycisk2, Przycisk przycisk3)
-{
-    if (przycisk1.stan != wylaczony || przycisk2.stan != wylaczony || przycisk3.stan != wylaczony)
-        licznik_Menu = micros();
-}
-
-void Menu::wrocDoZegara(Przycisk przycisk2)
-{  
-    if ((powrot <= micros() - licznik_Menu || przycisk2.stan == dlugieWcisniecie) && opcja != zegar_)
-    {
-        opcja = zegar_;
-    }
-}
-
-void Menu::program(int C[], zegarRTC Zegar, Przycisk przycisk1, Przycisk przycisk2, Przycisk przycisk3)
+void Menu::program(int C[], zegarRTC& Zegar, Przycisk przycisk1, Przycisk przycisk2, Przycisk przycisk3)
 {
     stanPrzyciskow(przycisk1, przycisk2, przycisk3);
 
-    zmianaOpcji(przycisk1, przycisk3);
+    changingOption(przycisk1, przycisk3);
 
-    switch (opcja)
+    switch (option)
     {
-    case zegar_:
+    case clock:
 
-        if(przycisk2.stan == dlugieWcisniecie)
+        Zegar.clock(C);
+
+        if (przycisk2.stan == dlugieWcisniecie)
         {
-            opcja = ustawianie_czasu;
+            option = settingTime;
         }
-
-        Zegar.zegar(C);
-
         // if (tablica_Nixie[1] - godzina_odtrucia != 0)
         // {
-        //   opcja = odtruwanie_lampy;
+        //   option = odtruwanie_lampy;
         //   godzina_odtrucia = tablica_Nixie[1];
         // }
 
         break;
 
-    case ustawianie_czasu:
+    case settingTime:
 
-        Zegar.ustawianieCzasu(C, przycisk1, przycisk2, przycisk3);
+        Zegar.setTime(C, przycisk1, przycisk2, przycisk3);
 
         wrocDoZegara(przycisk2);
         break;
 
-    case termometr:
+    case thermometer:
 
-        Zegar.temperaturaUstaw(C);
+        Zegar.thermometer(C);
         wrocDoZegara(przycisk2);
         break;
 
-    case data:
+    case date:
 
-        Zegar.data(C);
+        Zegar.date(C);
+
+        if(przycisk2.stan == dlugieWcisniecie)
+            option = settingDate;
+
         wrocDoZegara(przycisk2);
 
         break;
 
+    case settingDate:
+
+        Zegar.setDate(C, przycisk1, przycisk2, przycisk3);
+
+        if(przycisk2.stan == dlugieWcisniecie)
+            option = date;
+
+        wrocDoZegara(przycisk2);
+
+        break;
+
+    case stoper:
+
+        Zegar.stoper(C, przycisk2);
+
+        break;
 
     case budzik_:
         //switch(p1)
@@ -118,11 +85,74 @@ void Menu::program(int C[], zegarRTC Zegar, Przycisk przycisk1, Przycisk przycis
         break;
 
     default:
-        opcja = zegar_;
+        option = clock;
         break;
     }
 
 }
+
+void Menu::nextOption()
+{
+    option = static_cast<Opcje>(option + 1);
+    if (option == koniec)
+    {
+        option = clock;
+    }
+}
+
+void Menu::previousOption()
+{
+    if (option == clock)
+    {
+        option = koniec;
+    }
+    option = static_cast<Opcje>(option - 1);
+}
+
+void Menu::changingOption(Przycisk doPrzodu, Przycisk doTylu)
+{
+    if (czyZmienicOpcje())
+    {
+        if(doPrzodu.stan == krotkieWcisniecie)
+            nextOption();
+
+        if(doTylu.stan == krotkieWcisniecie)
+            previousOption();  
+    }    
+}
+
+bool Menu::czyZmienicOpcje()
+{
+    if(option == settingTime || option == settingDate)
+        return false;
+    else
+        return true;      
+}
+
+void Menu::stanPrzyciskow(Przycisk przycisk1, Przycisk przycisk2, Przycisk przycisk3)
+{
+    if (przycisk1.stan != wylaczony || przycisk2.stan != wylaczony || przycisk3.stan != wylaczony)
+        licznik_Menu = micros();
+}
+
+void Menu::wrocDoZegara(Przycisk przycisk2)
+{  
+    if ((powrot <= micros() - licznik_Menu) && option != clock)
+    {
+        option = clock;
+    }
+    else if(option == settingTime && przycisk2.stan == dlugieWcisniecie)
+    {
+        option = clock;
+    }
+    else if(option == settingDate && przycisk2.stan == dlugieWcisniecie)
+    {
+        option = date;
+    }
+    
+}
+
+
 
 void jasnosc()
 {

@@ -16,15 +16,15 @@ private:
   unsigned long licznik_Menu;
   unsigned long powrot;
   void wrocDoZegara(Przycisk przycisk2);
-  void nastepnaOpcja();
-  void poprzedniaOpcja();
-  void zmianaOpcji(Przycisk doPrzodu, Przycisk doTylu);
+  void nextOption();
+  void previousOption();
+  void changingOption(Przycisk doPrzodu, Przycisk doTylu);
   bool czyZmienicOpcje();
 
 public:
-  Opcje opcja;
+  Opcje option;
   Menu();
-  void program(int C[], zegarRTC Zegar, Przycisk przycisk1, Przycisk przycisk2, Przycisk przycisk3);
+  void program(int C[], zegarRTC& Zegar, Przycisk przycisk1, Przycisk przycisk2, Przycisk przycisk3);
 };
 
 #endif

@@ -6,37 +6,54 @@
 
 #include "Arduino.h"
 #include "przyciski.h"
-#include "czasPara.h"
+
+enum CzasPara
+{
+  Third,
+  Second,
+  First,
+
+  Last
+};
 
 class zegarRTC
 {
 private:
-  unsigned long ogranicznik_zegara = 0;
-  unsigned long interwal = 990000;
+  unsigned long ogranicznik_zegara;
+  unsigned long interwal = 300000;
 
-  void zmienSekunde(int C[], bool dodac);
-  void zmienMinute(int C[], bool dodac);
-  void zmienGodzine(int C[], bool dodac);
-  void sprawdzOverflow(int C[]);
-  void zmienCzas(int C[], Przycisk przycisk1, Przycisk przycisk3);
-  void zmienPara(Przycisk przycisk2);
+  void changeSecond(int C[], bool add);
+  void changeMinute(int C[], bool add);
+  void changeHour(int C[], bool add);
+  void checkTimeOverFlow(int C[]);
+  void checkDateOverFlow(int C[]);
+  void changeTime(int C[], Przycisk przycisk1, Przycisk przycisk3);
+
+  void changeDate(int C[], Przycisk foward, Przycisk backward);
+  void changeDay(int C[], bool add);
+  void changeMonth(int C[], bool add);
+  void changeYear(int C[], bool add);
+
+  void changeNumberPair(Przycisk przycisk2);
 
   void migajZegarem(int C[]);
-  int Pomocnicza[6];
   unsigned long okres_migania = 200000;
   bool miganie = true;
+  bool show_result;
+  unsigned long stoper_time;
 
-  bool dodac;
-  
-  CzasPara wskaznikPary;
+  bool add;
+  CzasPara pairPointer;
 
 public:
   DS3231 RTC;
   RTCDateTime dt;
-  void zegar(int C[]);
-  void data(int C[]);
-  void ustawianieCzasu(int C[], Przycisk przycisk1, Przycisk przycisk2, Przycisk przycisk3);
-  void temperaturaUstaw(int C[]);
+  void clock(int C[]);
+  void date(int C[]);
+  void stoper(int C[], Przycisk button);
+  void setTime(int C[], Przycisk przycisk1, Przycisk przycisk2, Przycisk przycisk3);
+  void setDate(int C[], Przycisk przycisk1, Przycisk przycisk2, Przycisk przycisk3);
+  void thermometer(int C[]);
   // void budzik(int C[], enum wartoscPrzycisku);
   bool opcja_wlaczona;
   int godzina_Odtrucia;

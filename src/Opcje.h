@@ -3,12 +3,14 @@
 
 enum Opcje
 {
-  zegar_,
-  termometr,
-  data,
+  clock,
+  thermometer,
+  date,
+  stoper,
 
   koniec,
-  ustawianie_czasu,
+  settingDate,
+  settingTime,
   budzik_,
   odtruwanie_lampy
 };

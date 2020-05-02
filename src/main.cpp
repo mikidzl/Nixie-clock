@@ -5,7 +5,7 @@
 #include "zegarRTC.h"
 #include "Menu.h"
 
-Przycisk przycisk1(6); // deklaracje przycisków
+Przycisk przycisk1(6); // deklaracje przycisków, liczba oznacza pin podłączenia przycisku
 Przycisk przycisk2(7);
 Przycisk przycisk3(8);
 
@@ -20,10 +20,8 @@ const int szum_przemiatnie = 14; // pin do pobierania szumu inicjującego rand
 
 unsigned long czasPrzycisk = 0;
 
-Opcje opcja = zegar_;
 bool opcjaStan = true;
 
-int temperatura;
 int godzina_odtrucia;
 int licznik_przemiecen = 0;
 bool czy_odtruwamy = false;
@@ -62,15 +60,13 @@ void loop()
   przycisk1.sprawdzPrzycisk(czasPrzycisk); // obsługa stanu przycisków
   przycisk2.sprawdzPrzycisk(czasPrzycisk);
   przycisk3.sprawdzPrzycisk(czasPrzycisk);
-  //Serial.println(micros()-przemiatanie);
-  //delay(500);
 }
 
 
 
 void fejkDispej(int C[])
 { 
-  if(micros() - fejktajm >= 100000)
+  if(micros() - fejktajm >= 99000)
   {
     Serial.print(C[0]);
     Serial.print(C[1]);
@@ -94,7 +90,7 @@ void odtruwanieLamp(int C[])
 //   }
 
 //   randomSeed(analogRead(szum_przemiatnie));
-//   Zegar.zegar(C);
+//   Zegar.zegarek(C);
 
 //   if (czas_Przemiecenia + licznik_przemiecen * (czas_Przemiecenia / 10) <= micros() - przemiatanie)
 //   {

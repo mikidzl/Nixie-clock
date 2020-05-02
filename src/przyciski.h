@@ -20,7 +20,7 @@ public:
   void sprawdzPrzycisk(unsigned long &czasPrzycisk);
 
 private:
-  unsigned long opoznieniePrzycisk = 30000;
+  unsigned long opoznieniePrzycisk = 40000;
   unsigned long graniczneWcisniecie = 500000;
   void zerujPrzycisk();
 };
