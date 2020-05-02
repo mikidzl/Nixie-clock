@@ -3,7 +3,7 @@
 Menu::Menu()
 {
     option = clock;
-    powrot = 7500000;
+    powrot = 10000000;
 }
 
 void Menu::program(int C[], zegarRTC& Zegar, Przycisk przycisk1, Przycisk przycisk2, Przycisk przycisk3)
@@ -17,7 +17,7 @@ void Menu::program(int C[], zegarRTC& Zegar, Przycisk przycisk1, Przycisk przyci
     case clock:
 
         Zegar.clock(C);
-
+        
         if (przycisk2.stan == dlugieWcisniecie)
         {
             option = settingTime;

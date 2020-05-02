@@ -52,7 +52,7 @@ void setup()
 void loop()
 {
   menu.program(tablica_Nixie, Zegar, przycisk1, przycisk2, przycisk3);
-  //nixie.wyswietlPWM(tablica_Nixie);
+  nixie.wyswietlPWM(tablica_Nixie);
 
   fejkDispej(tablica_Nixie);
 
@@ -60,6 +60,7 @@ void loop()
   przycisk1.sprawdzPrzycisk(czasPrzycisk); // obsługa stanu przycisków
   przycisk2.sprawdzPrzycisk(czasPrzycisk);
   przycisk3.sprawdzPrzycisk(czasPrzycisk);
+
 }
 
 

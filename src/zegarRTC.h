@@ -19,29 +19,32 @@ enum CzasPara
 class zegarRTC
 {
 private:
-  unsigned long ogranicznik_zegara;
+  unsigned long clock_limiter;
   unsigned long interwal = 300000;
 
-  void changeSecond(int C[], bool add);
-  void changeMinute(int C[], bool add);
-  void changeHour(int C[], bool add);
-  void checkTimeOverFlow(int C[]);
-  void checkDateOverFlow(int C[]);
-  void changeTime(int C[], Przycisk przycisk1, Przycisk przycisk3);
+  void changeSecond(bool add);
+  void changeMinute(bool add);
+  void changeHour(bool add);
+  void checkTimeOverFlow();
+  void changeTime(Przycisk przycisk1, Przycisk przycisk3);
 
-  void changeDate(int C[], Przycisk foward, Przycisk backward);
-  void changeDay(int C[], bool add);
-  void changeMonth(int C[], bool add);
-  void changeYear(int C[], bool add);
+  void changeDate(Przycisk foward, Przycisk backward);
+  void checkDateOverFlow();
+  void changeDay(bool add);
+  void changeMonth(bool add);
+  void changeYear(bool add);
 
   void changeNumberPair(Przycisk przycisk2);
+  bool option_turn_on;
+  int Temp[6];
 
-  void migajZegarem(int C[]);
+  void blinkPair(int C[]);
   unsigned long okres_migania = 200000;
-  bool miganie = true;
+  bool blink;
   bool show_result;
   unsigned long stoper_time;
 
+  void copyArray(int A[], int B[]);
   bool add;
   CzasPara pairPointer;
 
@@ -55,7 +58,6 @@ public:
   void setDate(int C[], Przycisk przycisk1, Przycisk przycisk2, Przycisk przycisk3);
   void thermometer(int C[]);
   // void budzik(int C[], enum wartoscPrzycisku);
-  bool opcja_wlaczona;
   int godzina_Odtrucia;
 
   zegarRTC();

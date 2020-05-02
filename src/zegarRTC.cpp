@@ -6,15 +6,16 @@ zegarRTC::zegarRTC()
   // while (!RTC.isReady());
   
   //First_Odtrucia = RTC.getDateTime().hour %10;
-  ogranicznik_zegara = interwal;          //wartość początkowa, aby zegar od zadziałał od razu przy pierwszym włączeniu
-  opcja_wlaczona = false;
+  clock_limiter = interwal;          //wartość początkowa, aby zegar od zadziałał od razu przy pierwszym włączeniu
+  option_turn_on = false;
   pairPointer = Third;
   show_result = false;
+  blink = false;
 }
 
-void zegarRTC::clock(int C[]) //pobiera czas z modułu RTC oraz rozbija na cyfry
+void zegarRTC::clock(int C[]) //main function, gets time from RTC module and assign numbers for each place of an array
 {
-  if (micros() - ogranicznik_zegara >= interwal)
+  if (micros() - clock_limiter >= interwal)   //keeps from asking RTC module about time ever cycle, because it's time consuming
   {
     dt = RTC.getDateTime();
 
@@ -27,13 +28,13 @@ void zegarRTC::clock(int C[]) //pobiera czas z modułu RTC oraz rozbija na cyfry
     C[1] = dt.hour % 10;
     C[0] = dt.hour / 10;
 
-    ogranicznik_zegara = micros();
+    clock_limiter = micros();           //resets clock limiter
   }
 }
 
 void zegarRTC::date(int C[]) //pobiera czas z modułu RTC oraz rozbija na cyfry
 {
-  if (micros() - ogranicznik_zegara >= interwal)
+  if (micros() - clock_limiter >= interwal)
   {
     dt = RTC.getDateTime();
 
@@ -46,50 +47,50 @@ void zegarRTC::date(int C[]) //pobiera czas z modułu RTC oraz rozbija na cyfry
     C[1] = dt.day % 10;
     C[0] = dt.day / 10;
 
-    ogranicznik_zegara = micros();
+    clock_limiter = micros();
   }
 }
 
-void zegarRTC::stoper(int C[], Przycisk button)
+void zegarRTC::stoper(int C[], Przycisk button)     //used as stop timer
 {
-  if(opcja_wlaczona && !show_result)
+  if(option_turn_on && !show_result)                //while counting and showing the time
   {
     unsigned long time = millis()/10 - stoper_time;
 
     C[5] = time % 10;
-    C[4] = (time / 10) % 10;
+    C[4] = (time / 10) % 10;      // hundreths of a second
 
     C[3] = (time / 100) % 10;
-    C[2] = (time / 1000) % 6;
+    C[2] = (time / 1000) % 6;     //  seconds
 
     C[1] = (time / 6000) % 10;
-    C[0] = (time / 60000) % 10;
+    C[0] = (time / 60000) % 10;   // minutes
 
-    if(C[0] == 9 && C[1] == 9)
+    if(C[0] == 9 && C[1] == 9)          //ends stoper if reached 99 minutes
     {
-      opcja_wlaczona = false;
+      option_turn_on = false;
       show_result = false;
     }
   }
 
-  if(opcja_wlaczona && button.stan == krotkieWcisniecie)
+  if(option_turn_on && button.stan == krotkieWcisniecie)  // showing result 
   {
-    if(show_result == true)
+    if(show_result == true)       // resets stoper to initial state
     {
-      opcja_wlaczona = false;
+      option_turn_on = false;
       show_result = false;
     }
-    else
+    else                          // so it shows the result and takes two times to enter this if to reset
       show_result = true;
   }
-  else if(!opcja_wlaczona && !show_result)
+  else if(!option_turn_on && !show_result)      //initial state waiting to actvie counting time by pressing the button
   {
-    for(int i=0; i <= 5; i++)
+    for(int i=0; i <= 5; i++)             // zeros all the digits of the display
       C[i] = 0;
 
-    if(button.stan == krotkieWcisniecie)
+    if(button.stan == krotkieWcisniecie)    //intializes counting
     {
-      opcja_wlaczona = true;
+      option_turn_on = true;
       stoper_time = millis()/10;
     }
   }
@@ -97,10 +98,20 @@ void zegarRTC::stoper(int C[], Przycisk button)
 
 void zegarRTC::setTime(int C[], Przycisk przycisk1, Przycisk przycisk2, Przycisk przycisk3)
 {
+  if(!option_turn_on)       //so it enters this condition only when once when initialized
+  {
+    copyArray(C,Temp);      //copies time to temporary array for changing values
+    option_turn_on = true;
+  }
+
   changeNumberPair(przycisk2);
 
-  changeTime(C, przycisk1, przycisk3);
-  
+  changeTime(przycisk1, przycisk3);
+
+  copyArray(Temp, C);
+
+  blinkPair(C);
+
   if (przycisk2.stan == dlugieWcisniecie)
   {
     dt = RTC.getDateTime();
@@ -109,11 +120,12 @@ void zegarRTC::setTime(int C[], Przycisk przycisk1, Przycisk przycisk2, Przycisk
     uint8_t Third = C[4] * 10 + C[5];
 
     RTC.setDateTime(dt.year, dt.month, dt.day, First, Second, Third);
+    option_turn_on = false;
   }
 
 }
 
-void zegarRTC::changeTime(int C[], Przycisk przycisk1, Przycisk przycisk3) //pozwala na zmiane wskazywanego czasu podręczenego i jego kontrolę przy pomocy przycisków
+void zegarRTC::changeTime( Przycisk przycisk1, Przycisk przycisk3) //pozwala na zmiane wskazywanego czasu podręczenego i jego kontrolę przy pomocy przycisków
 {
   if (przycisk1.stan == krotkieWcisniecie || przycisk3.stan == krotkieWcisniecie)
   {
@@ -129,21 +141,21 @@ void zegarRTC::changeTime(int C[], Przycisk przycisk1, Przycisk przycisk3) //poz
     switch (pairPointer)
     {
     case Third:
-      changeSecond(C, add);
+      changeSecond(add);
       break;
 
     case Second:
-      changeMinute(C, add);
+      changeMinute(add);
       break;
 
     case First:
-      changeHour(C, add);
+      changeHour(add);
       break;
 
     default:
       break;
     }
-    checkTimeOverFlow(C);
+    checkTimeOverFlow();
   }
 }
 
@@ -151,7 +163,7 @@ void zegarRTC::setDate(int C[], Przycisk przycisk1, Przycisk przycisk2, Przycisk
 {
   changeNumberPair(przycisk2);
   
-  changeDate(C, przycisk1, przycisk3);
+  changeDate(przycisk1, przycisk3);
 
   if (przycisk2.stan == dlugieWcisniecie)
   {
@@ -164,7 +176,7 @@ void zegarRTC::setDate(int C[], Przycisk przycisk1, Przycisk przycisk2, Przycisk
   }
 }
 
-void zegarRTC::changeDate(int C[], Przycisk foward, Przycisk backward)
+void zegarRTC::changeDate(Przycisk foward, Przycisk backward)
 {
   if (foward.stan == krotkieWcisniecie || backward.stan == krotkieWcisniecie)
   {
@@ -180,15 +192,15 @@ void zegarRTC::changeDate(int C[], Przycisk foward, Przycisk backward)
     switch (pairPointer)
     {
     case Third:
-      changeYear(C, add);
+      changeYear(add);
       break;
 
     case Second:
-      changeMonth(C, add);
+      changeMonth(add);
       break;
 
     case First:
-      changeDay(C, add);
+      changeDay(add);
       break;
 
     default:
@@ -196,7 +208,7 @@ void zegarRTC::changeDate(int C[], Przycisk foward, Przycisk backward)
     }
 
 
-    checkDateOverFlow(C);
+    checkDateOverFlow();
   }
 }
 
@@ -212,143 +224,142 @@ void zegarRTC::changeNumberPair(Przycisk przycisk2)
   }
 }
 
-void zegarRTC::checkTimeOverFlow(int C[])
+void zegarRTC::checkTimeOverFlow()
 {
   for (int i = 5; i >= 1; i--) 
   {
-    if ((C[i] == 6 && i % 2 == 0) || C[i] == 10) // przekroczenie górnego limitu cyfry
+    if ((Temp[i] == 6 && i % 2 == 0) || Temp[i] == 10) // przekroczenie górnego limitu cyfry
     {
-      C[i] = 0;
-      C[i - 1]++;
+      Temp[i] = 0;
+      Temp[i - 1]++;
     }
 
-    if (C[i] == -1) //przekroczenie dolnego limitu cyfry
+    if (Temp[i] == -1) //przekroczenie dolnego limitu cyfry
     {
       if (i % 2 == 0)
       {
-        C[i] = 5;
-        C[i - 1]--;
+        Temp[i] = 5;
+        Temp[i - 1]--;
       }
       else
       {
-        C[i] = 9;
-        C[i - 1]--;
+        Temp[i] = 9;
+        Temp[i - 1]--;
       }
     }
   }
   
-  if (C[0] < 0)           //overflow godzin
+  if (Temp[0] < 0)           //overflow godzin
   {
-    C[0] = 2;
-    C[1] = 3;
+    Temp[0] = 2;
+    Temp[1] = 3;
   }
-  else if (C[1] == 4 && C[0] == 2)
+  else if (Temp[1] == 4 && Temp[0] == 2)
   {
     for (int i = 0; i < 6; i++)
-      C[i] = 0;
+      Temp[i] = 0;
   }
 }
 
-void zegarRTC::checkDateOverFlow(int C[])
+void zegarRTC::checkDateOverFlow()
 {
   for(int i=5; i>=0; i = i - 2)     //overflow of upper decimal place
   {
-    if(C[i] >= 10)
+    if(Temp[i] >= 10)
     {
-      C[i] = 0;
-      C[i-1]++;
+      Temp[i] = 0;
+      Temp[i-1]++;
     }
 
-    if(C[i] <= -1)
+    if(Temp[i] <= -1)
     {
-      C[i] = 9;
-      C[i-1]--;
+      Temp[i] = 9;
+      Temp[i-1]--;
     }
   }
 
   
 }
 
-void zegarRTC::changeDay(int C[], bool add)
+void zegarRTC::changeDay(bool add)
 {
   if(add)
   {
-    C[1]++;
+    Temp[1]++;
   }
   else
   {
-    C[1]--;
+    Temp[1]--;
   }
   
 }
 
-void zegarRTC::changeMonth(int C[], bool add)
+void zegarRTC::changeMonth(bool add)
 {
   if(add)
   {
-    C[3]++;
+    Temp[3]++;
   }
   else
   {
-    C[3]--;
+    Temp[3]--;
   }
   
 }
 
-void zegarRTC::changeYear(int C[], bool add)
+void zegarRTC::changeYear(bool add)
 {
   if(add)
   {
-    C[5]++;
+    Temp[5]++;
   }
   else
   {
-    C[5]--;
+    Temp[5]--;
   }
   
 }
 
-void zegarRTC::changeSecond(int C[], bool add)
+void zegarRTC::changeSecond(bool add)
 {
   if (add)
   {
-    C[5]++;
+    Temp[5]++;
   }
   else
   {
-    C[5]--;
+    Temp[5]--;
   }
 }
 
-void zegarRTC::changeMinute(int C[], bool add)
+void zegarRTC::changeMinute(bool add)
 {
   if (add)
   {
-    C[3]++;
+    Temp[3]++;
   }
   else
   {
-    C[3]--;
+    Temp[3]--;
   }
 }
 
-void zegarRTC::changeHour(int C[], bool add)
+void zegarRTC::changeHour(bool add)
 {
   if (add)
   {
-    C[1]++;
+    Temp[1]++;
   }
   else
   {
-    C[1]--;
+    Temp[1]--;
   }
 }
 
 void zegarRTC::thermometer(int C[])
 {
-  if (micros() - ogranicznik_zegara >= interwal)
+  if (micros() - clock_limiter >= interwal)
   {
-    RTC.forceConversion();
     int temperatura = int(100 * RTC.readTemperature());
 
     C[0] = 0;
@@ -357,33 +368,59 @@ void zegarRTC::thermometer(int C[])
     C[3] = (temperatura / 100) % 10;
     C[4] = (temperatura / 10) % 10;
     C[5] = temperatura % 10;
+
+    clock_limiter = micros();
   }
 }
 
-void zegarRTC::migajZegarem(int C[])
+void zegarRTC::blinkPair(int C[])
 {
-  if (micros() - ogranicznik_zegara > okres_migania)
-    ;
-  switch (pairPointer)
+  if (micros() - clock_limiter >= okres_migania)
   {
-  case Third:
-    C[5] = 10;
-    C[4] = 10;
-    break;
+    switch (blink)
+    {
+    case false:
+      blink = true;
+      break;
+    
+    case true:
+      blink = false;
+      break;
 
-  case Second:
-    C[3] = 10;
-    C[2] = 10;
-    break;
-
-  case First:
-    C[1] = 10;
-    C[0] = 10;
-    break;
-
-  default:
-    break;
+    default:
+      break;
+    }
+    clock_limiter = micros();
   }
+  if(blink)
+  {
+    switch (pairPointer)
+    {
+    case Third:
+      C[5] = 0;
+      C[4] = 0;
+      break;
+
+    case Second:
+      C[3] = 0;
+      C[2] = 0;
+      break;
+
+    case First:
+      C[1] = 0;
+      C[0] = 0;
+      break;
+
+    default:
+      break;
+    }
+  }
+}
+
+void zegarRTC::copyArray(int A[], int B[])
+{
+  for(int i=0; i < 6; i++)
+    B[i] = A[i];
 }
 
 // void zegarRTC::budzik(int C[], wartoscPrzycisku)
