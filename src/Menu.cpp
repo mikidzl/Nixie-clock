@@ -17,7 +17,7 @@ void Menu::program(int C[], zegarRTC& Zegar, Przycisk przycisk1, Przycisk przyci
     case clock:
 
         Zegar.clock(C);
-        
+
         if (przycisk2.stan == dlugieWcisniecie)
         {
             option = settingTime;
@@ -27,6 +27,8 @@ void Menu::program(int C[], zegarRTC& Zegar, Przycisk przycisk1, Przycisk przyci
         //   option = odtruwanie_lampy;
         //   godzina_odtrucia = tablica_Nixie[1];
         // }
+        if(przycisk2.stan == krotkieWcisniecie)
+            option = odtruwanie_lampy;
 
         break;
 
@@ -39,7 +41,7 @@ void Menu::program(int C[], zegarRTC& Zegar, Przycisk przycisk1, Przycisk przyci
 
     case thermometer:
 
-        Zegar.thermometer(C);
+        Zegar.thermometer(C, przycisk2);
         wrocDoZegara(przycisk2);
         break;
 
@@ -80,6 +82,7 @@ void Menu::program(int C[], zegarRTC& Zegar, Przycisk przycisk1, Przycisk przyci
     case odtruwanie_lampy:
 
         //odtruwanieLamp(tablica_Nixie);
+        Zegar.slotMachine(C);
         wrocDoZegara(przycisk2);
 
         break;

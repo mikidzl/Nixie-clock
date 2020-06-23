@@ -13,7 +13,7 @@ NIXIE::NIXIE()
 
   okres = 2000;   //czas między zapalaniem się kolejnych lamp
   licznik_czasu = 0; //zmienna do określania czasu
-  jasnosc = 90;      //procentowa wartość jasności
+  jasnosc = 50;      //procentowa wartość jasności
   lampa = 1;         //sprawdzanie która lampa jest aktywna
   licznik_jasnosci = 0;
 }

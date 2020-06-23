@@ -46,6 +46,12 @@ private:
 
   void copyArray(int A[], int B[]);
   bool add;
+
+  unsigned long slotTime = 0;
+  unsigned long slotChange = 500000;
+  unsigned long slotPeriod = 500000;
+  int slotCounter = 0;
+
   CzasPara pairPointer;
 
 public:
@@ -56,7 +62,8 @@ public:
   void stoper(int C[], Przycisk button);
   void setTime(int C[], Przycisk przycisk1, Przycisk przycisk2, Przycisk przycisk3);
   void setDate(int C[], Przycisk przycisk1, Przycisk przycisk2, Przycisk przycisk3);
-  void thermometer(int C[]);
+  void thermometer(int C[], Przycisk button);
+  void slotMachine(int C[]);
   // void budzik(int C[], enum wartoscPrzycisku);
   int godzina_Odtrucia;
 

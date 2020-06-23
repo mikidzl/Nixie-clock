@@ -356,8 +356,10 @@ void zegarRTC::changeHour(bool add)
   }
 }
 
-void zegarRTC::thermometer(int C[])
+void zegarRTC::thermometer(int C[], Przycisk button)
 {
+  if(button.stan == krotkieWcisniecie)
+    RTC.forceConversion();
   if (micros() - clock_limiter >= interwal)
   {
     int temperatura = int(100 * RTC.readTemperature());
@@ -415,6 +417,31 @@ void zegarRTC::blinkPair(int C[])
       break;
     }
   }
+}
+
+void zegarRTC::slotMachine(int C[])
+{
+  if(slotCounter < 6 && micros() - slotTime >= slotChange)
+  {
+    if(slotCounter == 0)
+    {
+      for(int i = 0; i < 6; i++)
+        C[i] = 0;
+    }
+    for(int i = 5; 5 - slotCounter <= i ; i--)
+    {
+      C[i] = slotCounter + i - 5;
+    }
+    slotCounter++;
+    slotTime = micros();
+  }
+  else if(slotCounter >= 6 && micros() - slotTime >= slotChange)
+  {
+    slotTime = micros();
+    for(int i = 0; i < 6; i++)
+      C[i] = (C[i] + 1) % 10;
+  }
+
 }
 
 void zegarRTC::copyArray(int A[], int B[])

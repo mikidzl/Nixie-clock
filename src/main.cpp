@@ -106,4 +106,4 @@ void odtruwanieLamp(int C[])
 
 //   if ((6 - nixie.lampa) - licznik_przemiecen >= 0)
 //     C[nixie.lampa - 1] = random(10);
- }
+}
