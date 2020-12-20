@@ -13,6 +13,13 @@ class NIXIE
     void wylaczLampe();
     void nixieNapisz(uint8_t value);
 
+    bool lamp_status;
+
+    int A = 5;
+    int B = 6;
+    int C = 7;
+    int D = 8;
+
   public:
     int latchPin;
     int clockPin;

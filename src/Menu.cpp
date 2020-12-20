@@ -143,6 +143,7 @@ void Menu::wrocDoZegara(Przycisk przycisk2)
     if ((powrot <= micros() - licznik_Menu) && option != clock)
     {
         option = clock;
+    
     }
     else if(option == settingTime && przycisk2.stan == dlugieWcisniecie)
     {

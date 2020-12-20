@@ -2,18 +2,23 @@
 
 NIXIE::NIXIE()
 {
-  latchPin = 3;
-  clockPin = 4;
+  latchPin = 4;
+  clockPin = 3;
   dataPin = 2;
 
-  pinMode(latchPin,OUTPUT);  //piny do sterowania rejestrem przesuwnym
+  pinMode(latchPin,OUTPUT);  //pins for steering shift register 74hc595n
   pinMode(clockPin,OUTPUT);
   pinMode(dataPin,OUTPUT);
 
+  pinMode(A,OUTPUT);        //pins for steering 74141 nixie driver
+  pinMode(B,OUTPUT);
+  pinMode(C,OUTPUT);
+  pinMode(D,OUTPUT);
 
-  okres = 2000;   //czas między zapalaniem się kolejnych lamp
+
+  okres = 3000;   //czas między zapalaniem się kolejnych lamp
   licznik_czasu = 0; //zmienna do określania czasu
-  jasnosc = 50;      //procentowa wartość jasności
+  jasnosc = 90;      //procentowa wartość jasności
   lampa = 1;         //sprawdzanie która lampa jest aktywna
   licznik_jasnosci = 0;
 }
@@ -22,10 +27,10 @@ void NIXIE::nixieNapisz(uint8_t value)
 {
   //D cyfra
   //A cyfra jednosci
-  digitalWrite(12, (value & 0x08) >> 3);
-  digitalWrite(11, (value & 0x04) >> 2);
-  digitalWrite(10, (value & 0x02) >> 1);
-  digitalWrite(9, value & 0x01);
+  digitalWrite(D, (value & 0x08) >> 3);
+  digitalWrite(C, (value & 0x04) >> 2);
+  digitalWrite(B, (value & 0x02) >> 1);
+  digitalWrite(A, value & 0x01);
 }
 
 void NIXIE::wyswietlPWM(int C[])
@@ -36,9 +41,22 @@ void NIXIE::wyswietlPWM(int C[])
 
 void NIXIE::wlaczLampe(int C[])
 {
-  if (okres <= (micros() - licznik_czasu)) //kiedy zapalić lampe
+  if (okres <= (micros() - licznik_czasu))      //when to light the lamp
   {
     licznik_czasu = micros();
+
+    if(C[lampa -1] > 9 || C[lampa -1] < 0  )    //ensuring that value for lamp is a digit
+    {
+      nixieNapisz(C[lampa -1]);
+      lamp_status = HIGH;
+    }
+    else                    //if not don't show anything
+    {
+      nixieNapisz(10);      //value above 9 turns high impedence state on 74141 output
+      lamp_status = LOW;
+    }
+    
+
     digitalWrite(latchPin, LOW);
 
     byte zero = 0;
@@ -47,7 +65,6 @@ void NIXIE::wlaczLampe(int C[])
     shiftOut(dataPin, clockPin, MSBFIRST, zero);
     digitalWrite(latchPin, HIGH);
 
-    //nixieNapisz(C[lampa -1]);
 
     if (lampa == 6)
       lampa = 1;
