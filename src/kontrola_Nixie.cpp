@@ -18,7 +18,7 @@ NIXIE::NIXIE()
 
   okres = 3000;   //czas między zapalaniem się kolejnych lamp
   licznik_czasu = 0; //zmienna do określania czasu
-  jasnosc = 90;      //procentowa wartość jasności
+  jasnosc = 50;      //procentowa wartość jasności
   lampa = 1;         //sprawdzanie która lampa jest aktywna
   licznik_jasnosci = 0;
 }
@@ -45,14 +45,14 @@ void NIXIE::wlaczLampe(int C[])
   {
     licznik_czasu = micros();
 
-    if(C[lampa -1] > 9 || C[lampa -1] < 0  )    //ensuring that value for lamp is a digit
+    if(C[lampa -1] <= 9 && C[lampa -1] >= 0  )    //ensuring that value for lamp is a digit
     {
       nixieNapisz(C[lampa -1]);
       lamp_status = HIGH;
     }
     else                    //if not don't show anything
     {
-      nixieNapisz(10);      //value above 9 turns high impedence state on 74141 output
+      nixieNapisz(10);      //value 10-15 turns high impedence state on 74141 output
       lamp_status = LOW;
     }
     
@@ -61,7 +61,7 @@ void NIXIE::wlaczLampe(int C[])
 
     byte zero = 0;
 
-    bitWrite(zero, lampa, HIGH);
+    bitWrite(zero, lampa, lamp_status);
     shiftOut(dataPin, clockPin, MSBFIRST, zero);
     digitalWrite(latchPin, HIGH);
 
@@ -71,12 +71,12 @@ void NIXIE::wlaczLampe(int C[])
     else
       lampa++;
 
-    // if (licznik_jasnosci == 10) //pobieranie wartości do jasności
-    // {
-    //   jasnosc = map(analogRead(A1), 0, 1023, 10, 99);
-    //   licznik_jasnosci = 0;
-    // }
-    // licznik_jasnosci++;
+    if (licznik_jasnosci >= 25) //pobieranie wartości do jasności
+    {
+      jasnosc = map(analogRead(brightnessPin), 0, 1023, 12, 96);
+      licznik_jasnosci = 0;
+    }
+    licznik_jasnosci++;
   }
 }
 
@@ -89,5 +89,6 @@ void NIXIE::wylaczLampe()
     bitWrite(zero, lampa, LOW);
     shiftOut(dataPin, clockPin, MSBFIRST, zero);
     digitalWrite(latchPin, HIGH);
+    nixieNapisz(10);
   }
 }

@@ -24,6 +24,7 @@ class NIXIE
     int latchPin;
     int clockPin;
     int dataPin;
+    int brightnessPin = A1;
     
     int jasnosc;
     int Nixie;

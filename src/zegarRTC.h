@@ -19,13 +19,16 @@ enum CzasPara
 class zegarRTC
 {
 private:
+  unsigned long RTC_limiter;
+  unsigned long interwal = 500;
+
+  int Time[6];
   unsigned long clock_limiter;
-  unsigned long interwal = 300000;
 
   void changeSecond(bool add);
   void changeMinute(bool add);
   void changeHour(bool add);
-  void checkTimeOverFlow();
+  void checkTimeOverFlow(int Temp[]);
   void changeTime(Przycisk przycisk1, Przycisk przycisk3);
 
   void changeDate(Przycisk foward, Przycisk backward);
@@ -48,8 +51,8 @@ private:
   bool add;
 
   unsigned long slotTime = 0;
-  unsigned long slotChange = 500000;
-  unsigned long slotPeriod = 500000;
+  unsigned long slotChange = 100000;
+  unsigned long slotPeriod = 100000;
   int slotCounter = 0;
 
   CzasPara pairPointer;
@@ -62,7 +65,7 @@ public:
   void stoper(int C[], Przycisk button);
   void setTime(int C[], Przycisk przycisk1, Przycisk przycisk2, Przycisk przycisk3);
   void setDate(int C[], Przycisk przycisk1, Przycisk przycisk2, Przycisk przycisk3);
-  void thermometer(int C[], Przycisk button);
+  void thermometer(int C[]);
   void slotMachine(int C[]);
   // void budzik(int C[], enum wartoscPrzycisku);
   int godzina_Odtrucia;

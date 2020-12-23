@@ -41,7 +41,7 @@ void Menu::program(int C[], zegarRTC& Zegar, Przycisk przycisk1, Przycisk przyci
 
     case thermometer:
 
-        Zegar.thermometer(C, przycisk2);
+        Zegar.thermometer(C);
         wrocDoZegara(przycisk2);
         break;
 
@@ -140,14 +140,10 @@ void Menu::stanPrzyciskow(Przycisk przycisk1, Przycisk przycisk2, Przycisk przyc
 
 void Menu::wrocDoZegara(Przycisk przycisk2)
 {  
-    if ((powrot <= micros() - licznik_Menu) && option != clock)
+    if ((powrot <= micros() - licznik_Menu) && (option != clock || option !=settingDate) ||  przycisk2.stan == dlugieWcisniecie)
     {
         option = clock;
     
-    }
-    else if(option == settingTime && przycisk2.stan == dlugieWcisniecie)
-    {
-        option = clock;
     }
     else if(option == settingDate && przycisk2.stan == dlugieWcisniecie)
     {
@@ -156,32 +152,4 @@ void Menu::wrocDoZegara(Przycisk przycisk2)
     
 }
 
-
-
-void jasnosc()
-{
-//   if (przycisk1.stan == krotkieWcisniecie)
-//   {
-//     if (nixie.jasnosc < 84)
-//       nixie.jasnosc += 15;
-//     przycisk1.zerujPrzycisk();
-//   }
-//   else if (przycisk1.stan == dlugieWcisniecie)
-//   {
-//       nixie.jasnosc = 5;
-//     przycisk1.zerujPrzycisk();
-//   }
-//   if (przycisk2.stan == krotkieWcisniecie)
-//   {
-//     if (nixie.jasnosc > 16)
-//       nixie.jasnosc += -15;
-//     przycisk2.zerujPrzycisk();
-//   }
-//   else if (przycisk2.stan == dlugieWcisniecie)
-//   {
-//     if (nixie.jasnosc > 21)
-//       nixie.jasnosc += -10;
-//     przycisk2.zerujPrzycisk();
-//   }
-}
 

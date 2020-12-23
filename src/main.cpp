@@ -5,14 +5,14 @@
 #include "zegarRTC.h"
 #include "Menu.h"
 
-Przycisk przycisk1(6); // deklaracje przycisków, liczba oznacza pin podłączenia przycisku
-Przycisk przycisk2(7);
-Przycisk przycisk3(8);
+Przycisk przycisk1(9); // deklaracje przycisków, liczba oznacza pin podłączenia przycisku
+Przycisk przycisk2(10);
+Przycisk przycisk3(11);
 
 NIXIE nixie;          // klasa konwertująca BCD oraz obsługująca lampy
 //int tablica_Nixie[6]; //tablica cyfr do wyświetlenia na lampach
 
-int tablica_Nixie[6] = {0,0,2,2,2,2};
+int tablica_Nixie[6] = {10,10,10,10,10,10};
 
 int dupa = 0;
 
@@ -20,7 +20,7 @@ zegarRTC Zegar; //klasa obsługująca zegar RTC
 
 Menu menu;
 
-const int szum_przemiatnie = 14; // pin do pobierania szumu inicjującego rand
+//const int szum_przemiatnie = 14; // pin do pobierania szumu inicjującego rand
 
 unsigned long czasPrzycisk = 0;
 
@@ -37,7 +37,6 @@ unsigned long fejktajm = 0;
 //____________________________________________________________________
 
 void odtruwanieLamp(int C[]);
-void jasnosc();
 void fejkDispej(int C[]);
 
 //___________________________________________________________________________
@@ -47,33 +46,34 @@ void setup()
   Serial.begin(115200);
   Serial.println("Połączono");
 
-  // Zegar.RTC.begin(); 
-  // while (!Zegar.RTC.isReady());
+  Zegar.RTC.begin(); 
+  while (!Zegar.RTC.isReady());
 
   przemiatanie = micros();
 }
 
 void loop()
 {
-  // menu.program(tablica_Nixie, Zegar, przycisk1, przycisk2, przycisk3);
+  menu.program(tablica_Nixie, Zegar, przycisk1, przycisk2, przycisk3);
   nixie.wyswietlPWM(tablica_Nixie);
 
-  if(micros() - przemiatanie > 100000)
-  {
-    dupa++;
-    if(dupa == 100) dupa = 0;
 
-    tablica_Nixie[0] = dupa%10;
-    tablica_Nixie[1] = dupa/10;
-    przemiatanie = micros();
-  }
+  // if(micros() - przemiatanie > 100000)
+  // {
+  //   dupa++;
+  //   if(dupa == 100) dupa = 0;
+
+  //   tablica_Nixie[5] = dupa%10;
+  //   tablica_Nixie[4] = dupa/10;
+  //   przemiatanie = micros();
+  // }
 
   fejkDispej(tablica_Nixie);
 
 
-  // przycisk1.sprawdzPrzycisk(czasPrzycisk); // obsługa stanu przycisków
-  // przycisk2.sprawdzPrzycisk(czasPrzycisk);
-  // przycisk3.sprawdzPrzycisk(czasPrzycisk);
+  przycisk1.sprawdzPrzycisk(czasPrzycisk); // obsługa stanu przycisków
+  przycisk2.sprawdzPrzycisk(czasPrzycisk);
+  przycisk3.sprawdzPrzycisk(czasPrzycisk);
 
 }
 
