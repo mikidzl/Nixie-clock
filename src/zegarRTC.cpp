@@ -30,27 +30,27 @@ void zegarRTC::clock(int C[]) //main function, gets time from RTC module and ass
     {
       dt = RTC.getDateTime();
 
-      C[5] = dt.second % 10;
-      C[4] = dt.second / 10;
+      Time[5] = dt.second % 10;
+      Time[4] = dt.second / 10;
 
-      C[3] = dt.minute % 10;
-      C[2] = dt.minute / 10;
+      Time[3] = dt.minute % 10;
+      Time[2] = dt.minute / 10;
 
-      C[1] = dt.hour % 10;
-      C[0] = dt.hour / 10;
+      Time[1] = dt.hour % 10;
+      Time[0] = dt.hour / 10;
 
       RTC_limiter = millis(); //resets clock limiter
       option_turn_on = false;
     }
   }
-  // if (millis() - clock_limiter >= 1000)
-  // {
-  //   Time[5] += (millis() - clock_limiter)/1000;
-  //   clock_limiter = millis();
+  if (millis() - clock_limiter >= 1000)
+  {
+    Time[5] += (millis() - clock_limiter)/1000;
+    clock_limiter = millis();
 
-  //   checkTimeOverFlow(Time);
-  //   copyArray(Time, C);
-  // }
+    checkTimeOverFlow(Time);
+    copyArray(Time, C);
+  }
 }
 
 void zegarRTC::date(int C[]) //pobiera czas z modułu RTC oraz rozbija na cyfry
@@ -247,13 +247,19 @@ void zegarRTC::checkTimeOverFlow(int Temp[])
 {
   for (int i = 5; i >= 1; i--)
   {
-    if ((Temp[i] == 6 && i % 2 == 0) || Temp[i] == 10) // przekroczenie górnego limitu cyfry
+    if (Temp[i] >= 10 && i % 2 == 1) //overflowing upper limit of odd digits
     {
-      Temp[i] = 0;
-      Temp[i - 1]++;
+      Temp[i - 1] += Temp[i] / 10;
+      Temp[i] = Temp[i] % 10;
     }
 
-    if (Temp[i] == -1) //przekroczenie dolnego limitu cyfry
+    if (Temp[i] >= 6 && (i == 4 || i == 2)) //overflowing upper limit for tens of seconds and tens of minutes
+    {
+      Temp[i - 1] += Temp[i] / 6;
+      Temp[i] = Temp[i] % 6;
+    }
+
+    if (Temp[i] <= -1) //checking for violation of lower limit
     {
       if (i % 2 == 0)
       {
@@ -268,15 +274,14 @@ void zegarRTC::checkTimeOverFlow(int Temp[])
     }
   }
 
-  if (Temp[0] < 0) //overflow godzin
+  if (Temp[0] < 0) //overflow of hours
   {
     Temp[0] = 2;
     Temp[1] = 3;
   }
-  else if (Temp[1] == 4 && Temp[0] == 2)
+  else if (Temp[1] >= 4 && Temp[0] == 2)    //  if next day
   {
-    for (int i = 0; i < 6; i++)
-      Temp[i] = 0;
+    Temp[1] = Temp[0]*10 + Temp[1] - 24;    //  thus synchronization interval with clock shouldn't be more than 6 hours
   }
 }
 

@@ -20,7 +20,7 @@ class zegarRTC
 {
 private:
   unsigned long RTC_limiter;
-  unsigned long interwal = 500;
+  unsigned long interwal = 1000*60*30;     //30 minutes
 
   int Time[6];
   unsigned long clock_limiter;
